@@ -8,11 +8,11 @@ import Collapse from "@mui/material/Collapse";
 import Avatar from "@mui/material/Avatar";
 import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { red } from "@mui/material/colors";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Forum } from "@mui/icons-material";
-import { Box, Tooltip } from "@mui/material";
+import { FilePresent, Forum } from "@mui/icons-material";
+import { Box, Button, Stack, Tooltip } from "@mui/material";
 import { Comment } from "../types/comment";
+import { commentItemStyles } from "./CommentItem.styled";
 
 interface IProps {
   comment: Comment;
@@ -23,11 +23,10 @@ interface ExpandMoreProps extends IconButtonProps {
 }
 
 const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props;
+  const { ...other } = props;
   return <IconButton {...other} />;
 })(({ theme, expand }) => ({
   transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
-  marginLeft: "auto",
   transition: theme.transitions.create("transform", {
     duration: theme.transitions.duration.shortest,
   }),
@@ -41,65 +40,79 @@ const CommentItem = ({ comment }: IProps) => {
   };
 
   return (
-    <Card sx={{ maxWidth: "auto" }}>
+    <Card sx={commentItemStyles.card}>
       <CardHeader
-        sx={{ bgcolor: "gray" }}
+        disableTypography
+        sx={commentItemStyles.cardHeader}
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+          <Avatar sx={commentItemStyles.avatar} aria-label="recipe">
             {comment.user.name[0]}
           </Avatar>
         }
         title={comment.user.name}
         subheader={comment.createdAt.toISOString()}
       />
-      {/* <CardMedia
-        component="img"
-        height="194"
-        image="/static/images/cards/paella.jpg"
-        alt="Paella dish"
-      /> */}
-      <CardContent>
+      <CardContent sx={commentItemStyles.cardContent}>
+        <Box
+          component="div"
+          sx={commentItemStyles.imageContainer}
+          key={"https://images.unsplash.com/photo-1551963831-b3b1ca40c98e"}
+        >
+          <img
+            src={`https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=164&h=164&fit=crop&auto=format`}
+            style={commentItemStyles.image}
+            alt={"item.title"}
+            loading="lazy"
+          />
+        </Box>
         <Typography variant="body2" color="text.secondary">
           {comment.text}
         </Typography>
       </CardContent>
 
       <CardActions disableSpacing>
-        <Tooltip title="reply to comment">
-          <IconButton aria-label="reply to comment">
-            <Forum />
-          </IconButton>
+        <Tooltip title="file name">
+          <Button aria-label="reply to comment">
+            <FilePresent /> Filename.txt
+          </Button>
         </Tooltip>
-    
-
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={1}
+          sx={{ marginLeft: "auto" }}
+        >
+          <Tooltip title="reply to comment">
+            <IconButton aria-label="reply to comment">
+              <Forum />
+            </IconButton>
+          </Tooltip>
+          <Box component="span">{comment.comments.length}</Box>
+          <ExpandMore
+            expand={expanded}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
           >
-          <ExpandMoreIcon />
-        </ExpandMore>
-         
+            <ExpandMoreIcon />
+          </ExpandMore>
+        </Stack>
       </CardActions>
 
       <Collapse
         in={expanded}
         timeout="auto"
         unmountOnExit
-        sx={{ paddingLeft: "1%" }}
+        sx={commentItemStyles.collapse}
       >
-
-<Box sx={{ paddingLeft: 4 }}>
-                  {comment.comments?.map((child) => (
-                     <CommentItem
-                        key={child.id}
-                        comment={child}
-                     />
-                  ))}
-               </Box>
+        <Box sx={{ paddingLeft: 4 }}>
+          {comment.comments?.map((child) => (
+            <CommentItem key={child.id} comment={child} />
+          ))}
+        </Box>
       </Collapse>
     </Card>
   );
 };
-export default CommentItem;
+
+export default CommentItem
