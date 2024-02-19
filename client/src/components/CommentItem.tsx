@@ -15,9 +15,10 @@ import { useState } from "react";
 
 interface IProps {
   comment: Comment;
+  handleModal: () => void;
 }
 
-const CommentItem = ({ comment }: IProps) => {
+const CommentItem = ({ comment, handleModal }: IProps) => {
   const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => {
@@ -56,7 +57,7 @@ const CommentItem = ({ comment }: IProps) => {
 
       <CardActions disableSpacing>
          <Tooltip title="file name">
-          <Button aria-label="reply to comment">
+          <Button aria-label="filename">
             <FilePresent /> Filename.txt
           </Button>
         </Tooltip>
@@ -67,7 +68,7 @@ const CommentItem = ({ comment }: IProps) => {
           sx={{ marginLeft: "auto" }}
         >
           <Tooltip title="reply to comment">
-            <IconButton aria-label="reply to comment">
+            <IconButton onClick={handleModal} aria-label="reply to comment">
               <Forum />
             </IconButton>
           </Tooltip>
@@ -91,7 +92,7 @@ const CommentItem = ({ comment }: IProps) => {
       >
         <Box sx={{ paddingLeft: 4 }}>
           {comment.comments?.map((child) => (
-            <CommentItem key={child.id} comment={child} />
+            <CommentItem key={child.id} comment={child} handleModal={handleModal} />
           ))}
         </Box>
       </Collapse>

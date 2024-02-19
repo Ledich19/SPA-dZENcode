@@ -1,8 +1,11 @@
 import "./App.scss";
 import { Container, Paper } from "@mui/material";
 import CommentsTable from "./components/CommentsTable";
+import CommentForm from "./components/CommentForm";
+import { useState } from "react";
 
 function App() {
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const mockData = [
     {
       id: 1,
@@ -316,11 +319,15 @@ function App() {
     },
   ];
 
+  const handleModal = () => {
+    setOpenModal((value) => !value);
+  };
+
   return (
     <Container>
       <Paper>
-        {/* <CommentItem comment={mockData[0]}/> */}
-        <CommentsTable comments={mockData} />
+        <CommentForm isOpen={openModal} handleModal={handleModal} />
+        <CommentsTable comments={mockData} handleModal={handleModal} />
       </Paper>
     </Container>
   );

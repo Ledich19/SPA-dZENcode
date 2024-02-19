@@ -12,7 +12,7 @@ import Paper from "@mui/material/Paper";
 //import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import CommentItem from "./CommentItem";
 import { Comment } from "../types/comment";
-import { Box, TableSortLabel } from "@mui/material";
+import { Box, Button, TableSortLabel } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { useState } from "react";
 // function createData(
@@ -118,9 +118,10 @@ import { useState } from "react";
 
 interface IProps {
   comments: Comment[];
+  handleModal: () => void;
 }
 
-const CommentsTable = ({ comments }: IProps) => {
+const CommentsTable = ({ comments, handleModal }: IProps) => {
   // const [page, setPage] = React.useState(0);
   // const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -213,13 +214,16 @@ const CommentsTable = ({ comments }: IProps) => {
                 </TableSortLabel>
               </TableCell>
 
+<TableCell>
+<Button onClick={handleModal}>Add comment</Button>
+</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {comments.map((comment) => (
               <TableRow key={comment.id}>
-                <TableCell colSpan={3}>
-                  <CommentItem comment={comment} />
+                <TableCell colSpan={4}>
+                  <CommentItem comment={comment} handleModal={handleModal}/>
                 </TableCell>
               </TableRow>
             ))}
