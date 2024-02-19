@@ -1,6 +1,6 @@
 import "./App.scss";
 import { Container, Paper } from "@mui/material";
-import CommentsTable from "./components/CommentItem";
+import CommentsTable from "./components/CommentsTable";
 
 function App() {
   const mockData = [
@@ -319,7 +319,8 @@ function App() {
   return (
     <Container>
       <Paper>
-        <CommentsTable comment={mockData[0]}/>
+        {/* <CommentItem comment={mockData[0]}/> */}
+        <CommentsTable comments={mockData} />
       </Paper>
     </Container>
   );
