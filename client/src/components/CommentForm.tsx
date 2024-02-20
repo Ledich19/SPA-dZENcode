@@ -5,7 +5,7 @@ import { CloseBtn, ModalPaper, StyledTextarea } from "./CommentForm.styled";
 import useInput from "../hooks/useInput";
 import ErrorMessage from "./ErrorMessage";
 import { AddPhotoAlternate, AttachFile, Cancel } from "@mui/icons-material";
-import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH } from "../constants";
+import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, MAX_FILE_SIZE } from "../constants";
 
 interface IProps {
   isOpen: boolean;
@@ -122,6 +122,10 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
   const handleSelectTxt = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const file = e.target.files[0];
+    if (file.size > MAX_FILE_SIZE) {
+      alert("The file is too large. Please select a file no larger than 100 KB.");
+      return;
+    }
     const reader = new FileReader();
     reader.onload = (event) => {
       const fileData = event.target?.result;
