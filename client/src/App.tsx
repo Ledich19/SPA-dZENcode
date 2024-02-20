@@ -3,12 +3,14 @@ import { Container, Paper } from "@mui/material";
 import CommentsTable from "./components/CommentsTable";
 import CommentForm from "./components/CommentForm";
 import { useState } from "react";
+import { useSockets } from "./hooks/useSockets";
 
 function App() {
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const { comments, log, actions } = useSockets();
   const mockData = [
     {
-      id: 1,
+      id: '1',
       text: "Отличный пост!",
       user: {
         name: "Иван Иванов",
@@ -17,7 +19,7 @@ function App() {
       createdAt: new Date("2024-02-17T08:30:00"),
       comments: [
         {
-          id: 2,
+          id: '2',
           text: "Спасибо за информацию!",
           user: {
             name: "Анна Петрова",
@@ -26,7 +28,7 @@ function App() {
           createdAt: new Date("2024-02-16T15:45:00"),
           comments: [
             {
-              id: 5,
+              id: '5',
               text: "Очень интересно!",
               user: {
                 name: "Дмитрий Васильев",
@@ -35,7 +37,7 @@ function App() {
               createdAt: new Date("2024-02-13T12:00:00"),
               comments: [
                 {
-                  id: 7,
+                  id: '7',
                   text: "Спасибо за разъяснение!",
                   user: {
                     name: "Алексей Морозов",
@@ -44,7 +46,7 @@ function App() {
                   createdAt: new Date("2024-02-11T17:45:00"),
                   comments: [
                     {
-                      id: 14,
+                      id: '14',
                       text: "Это то, что я искал!",
                       user: {
                         name: "Евгения Ковалева",
@@ -54,7 +56,7 @@ function App() {
                       comments: [],
                     },
                     {
-                      id: 15,
+                      id: '15',
                       text: "Отличная работа!",
                       user: {
                         name: "Владимир Федоров",
@@ -64,7 +66,7 @@ function App() {
                       comments: [],
                     },
                     {
-                      id: 16,
+                      id: '16',
                       text: "Спасибо за информацию!",
                       user: {
                         name: "Андрей Павлов",
@@ -76,7 +78,7 @@ function App() {
                   ],
                 },
                 {
-                  id: 8,
+                  id: '8',
                   text: "Жду продолжения!",
                   user: {
                     name: "Наталья Крылова",
@@ -86,7 +88,7 @@ function App() {
                   comments: [],
                 },
                 {
-                  id: 9,
+                  id: '9',
                   text: "Спасибо, полезно!",
                   user: {
                     name: "Артем Беляков",
@@ -98,7 +100,7 @@ function App() {
               ],
             },
             {
-              id: 6,
+              id: '6',
               text: "Мне не понравилось...",
               user: {
                 name: "Светлана Николаева",
@@ -110,7 +112,7 @@ function App() {
           ],
         },
         {
-          id: 3,
+          id: '3',
           text: "Полностью согласен!",
           user: {
             name: "Петр Сидоров",
@@ -119,7 +121,7 @@ function App() {
           createdAt: new Date("2024-02-15T10:15:00"),
           comments: [
             {
-              id: 17,
+              id: '17',
               text: "Мне не понравилось...",
               user: {
                 name: "Елена Макарова",
@@ -129,7 +131,7 @@ function App() {
               comments: [],
             },
             {
-              id: 18,
+              id: '18',
               text: "Очень интересно, спасибо!",
               user: {
                 name: "Денис Козырев",
@@ -138,7 +140,7 @@ function App() {
               createdAt: new Date("2024-01-31T16:10:00"),
               comments: [
                 {
-                  id: 24,
+                  id: '24',
                   text: "Спасибо за разъяснение!",
                   user: {
                     name: "Ангелина Сидорова",
@@ -148,7 +150,7 @@ function App() {
                   comments: [],
                 },
                 {
-                  id: 25,
+                  id: '25',
                   text: "Это то, что мне нужно!",
                   user: {
                     name: "Роман Крылов",
@@ -158,7 +160,7 @@ function App() {
                   comments: [],
                 },
                 {
-                  id: 26,
+                  id: '26',
                   text: "Спасибо, интересно!",
                   user: {
                     name: "Екатерина Морозова",
@@ -170,7 +172,7 @@ function App() {
               ],
             },
             {
-              id: 19,
+              id: '19',
               text: "Спасибо, поделились полезной информацией!",
               user: {
                 name: "Олеся Новикова",
@@ -182,7 +184,7 @@ function App() {
           ],
         },
         {
-          id: 4,
+          id: '4',
           text: "Отличный контент!",
           user: {
             name: "Елена Козлова",
@@ -191,7 +193,7 @@ function App() {
           createdAt: new Date("2024-02-14T18:20:00"),
           comments: [
             {
-              id: 10,
+              id: '10',
               text: "Вау, отличная статья!",
               user: {
                 name: "Ольга Лебедева",
@@ -200,7 +202,7 @@ function App() {
               createdAt: new Date("2024-02-08T08:45:00"),
               comments: [
                 {
-                  id: 12,
+                  id: '12',
                   text: "Полностью согласен с автором!",
                   user: {
                     name: "Татьяна Иванова",
@@ -209,7 +211,7 @@ function App() {
                   createdAt: new Date("2024-02-06T13:20:00"),
                   comments: [
                     {
-                      id: 20,
+                      id: '20',
                       text: "С нетерпением жду новых статей!",
                       user: {
                         name: "Ирина Ларина",
@@ -219,7 +221,7 @@ function App() {
                       comments: [],
                     },
                     {
-                      id: 21,
+                      id: '21',
                       text: "Отличный контент!",
                       user: {
                         name: "Сергей Семенов",
@@ -229,7 +231,7 @@ function App() {
                       comments: [],
                     },
                     {
-                      id: 22,
+                      id: '22',
                       text: "Спасибо за информацию!",
                       user: {
                         name: "Александра Попова",
@@ -239,7 +241,7 @@ function App() {
                       comments: [],
                     },
                     {
-                      id: 23,
+                      id: '23',
                       text: "Все понятно, спасибо!",
                       user: {
                         name: "Павел Васильев",
@@ -251,7 +253,7 @@ function App() {
                   ],
                 },
                 {
-                  id: 13,
+                  id: '13',
                   text: "Жду новых публикаций!",
                   user: {
                     name: "Игорь Смирнов",
@@ -263,7 +265,7 @@ function App() {
               ],
             },
             {
-              id: 11,
+              id: '11',
               text: "Спасибо, почерпнул новое!",
               user: {
                 name: "Михаил Громов",
@@ -277,7 +279,7 @@ function App() {
       ],
     },
     {
-      id: 27,
+      id: '27',
       text: "С нетерпением жду продолжения!",
       user: {
         name: "Глеб Федотов",
@@ -287,7 +289,7 @@ function App() {
       comments: [],
     },
     {
-      id: 28,
+      id: '28',
       text: "Мне понравилось, спасибо!",
       user: {
         name: "София Андреева",
@@ -296,7 +298,7 @@ function App() {
       createdAt: new Date("2024-01-21T07:45:00"),
       comments: [
         {
-          id: 30,
+          id: '30',
           text: "Спасибо за публикацию!",
           user: {
             name: "Виктория Степанова",
@@ -308,7 +310,7 @@ function App() {
       ],
     },
     {
-      id: 29,
+      id: '29',
       text: "Отлично написано!",
       user: {
         name: "Даниил Воронов",

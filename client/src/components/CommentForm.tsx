@@ -19,9 +19,9 @@ interface IProps {
 }
 
 const CommentForm = ({ isOpen, handleModal }: IProps) => {
-  const [selectedImg, setSelectedImg] = useState<File | null>(null);
+  const [selectedImg, setSelectedImg] = useState<string | ArrayBuffer | null>(null);
   const inputImgRef = useRef<HTMLInputElement>(null);
-  const [selectedTxt, setSelectedTxt] = useState<File | null>(null);
+  const [selectedTxt, setSelectedTxt] = useState<string | ArrayBuffer | null>(null);
   const inputTxtRef = useRef<HTMLInputElement>(null);
   const nameInput = useInput("", {
     isEmpty: false,
@@ -67,18 +67,36 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
 
   const handleSelectImg = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    setSelectedImg(e.target.files[0]);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Image = event.target?.result;
+      if (base64Image) {
+        setSelectedImg(base64Image);
+      }
+    };
+    reader.readAsDataURL(e.target.files[0]);
   };
+
+
   const handleCancelImg = () => {
     setSelectedImg(null);
     if (inputImgRef.current) {
       inputImgRef.current.value = "";
     }
   };
+  
   const handleSelectTxt = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    setSelectedTxt(e.target.files[0]);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Image = event.target?.result;
+      if (base64Image) {
+        setSelectedTxt(base64Image);
+      }
+    };
+    reader.readAsDataURL(e.target.files[0]);
   };
+
   const handleCancelTxt = () => {
     setSelectedImg(null);
     if (inputTxtRef.current) {
