@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { io, Socket } from "Socket.IO-client";
 import { Comment, CommentCreate } from "../types/comment";
+import { SERVER_URI } from "../constants";
 
 let socket: Socket;
-const SERVER_URI = "http://localhost:3001/comments";
 
 // comments:get
 // comment:id
@@ -11,9 +11,7 @@ const SERVER_URI = "http://localhost:3001/comments";
 // comment:put
 // comment:delete
 
-
 export const useSockets = () => {
-
   if (!socket) {
     socket = io(SERVER_URI, {
       query: {
@@ -36,7 +34,7 @@ export const useSockets = () => {
       "comment:post",
       (payload: { type: string; rootId: string; data: Comment }) => {
         const root = comments?.find((comment) => comment.id === payload.rootId);
-        if (!root) return
+        if (!root) return;
         insertCommentByParentId(root, payload.rootId, payload.data);
       }
     );
@@ -46,7 +44,7 @@ export const useSockets = () => {
       "comment:id",
       (payload: { type: string; rootId: string; data: Comment }) => {
         const root = comments?.find((comment) => comment.id === payload.rootId);
-        if (!root) return
+        if (!root) return;
         insertCommentByParentId(root, payload.rootId, payload.data);
       }
     );
@@ -82,14 +80,9 @@ export const useSockets = () => {
     socket.emit("comment:id", payload);
   }, []);
 
-
   // отправка сообщения
   const send = useCallback(
-    (payload: {
-      id: string;
-      rootId: string;
-      data: CommentCreate;
-    }) => {
+    (payload: { id: string; rootId: string; data: CommentCreate }) => {
       socket.emit("comment:post", payload);
     },
     []
@@ -97,11 +90,7 @@ export const useSockets = () => {
 
   // обновление сообщения
   const update = useCallback(
-    (payload: {
-      id: string;
-      rootId: string;
-      data: CommentCreate;
-    }) => {
+    (payload: { id: string; rootId: string; data: CommentCreate }) => {
       socket.emit("comment:put", payload);
     },
     []
