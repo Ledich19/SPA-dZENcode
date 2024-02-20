@@ -8,11 +8,7 @@
     "prisma": "^5.9.1"
   },
   "dependencies": {
-    "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.15.10",
-    "@mui/material": "^5.15.10",
-    "@mui/styled-engine-sc": "^6.0.0-alpha.16",
     "@prisma/client": "^5.9.1",
-    "styled-components": "^6.1.8"
+    "class-validator": "^0.14.1"
   }
 }
