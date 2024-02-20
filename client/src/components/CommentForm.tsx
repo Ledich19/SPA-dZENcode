@@ -6,10 +6,12 @@ import useInput from "../hooks/useInput";
 import ErrorMessage from "./ErrorMessage";
 import { AddPhotoAlternate, AttachFile, Cancel } from "@mui/icons-material";
 import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, MAX_FILE_SIZE } from "../constants";
+import { CommentActions } from "../types/comments.types";
 
 interface IProps {
   isOpen: boolean;
   handleModal: () => void;
+  actions: CommentActions;
 }
 
 const CommentForm = ({ isOpen, handleModal }: IProps) => {

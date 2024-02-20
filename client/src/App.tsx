@@ -54,6 +54,7 @@ function App() {
                       },
                       createdAt: new Date("2024-02-04T07:30:00"),
                       comments: [],
+                      parentId: '7', // Добавлено поле parentId
                     },
                     {
                       id: '15',
@@ -64,6 +65,7 @@ function App() {
                       },
                       createdAt: new Date("2024-02-03T14:15:00"),
                       comments: [],
+                      parentId: '7', // Добавлено поле parentId
                     },
                     {
                       id: '16',
@@ -74,8 +76,10 @@ function App() {
                       },
                       createdAt: new Date("2024-02-02T11:20:00"),
                       comments: [],
+                      parentId: '7', // Добавлено поле parentId
                     },
                   ],
+                  parentId: '5', // Добавлено поле parentId
                 },
                 {
                   id: '8',
@@ -86,6 +90,7 @@ function App() {
                   },
                   createdAt: new Date("2024-02-10T14:20:00"),
                   comments: [],
+                  parentId: '5', // Добавлено поле parentId
                 },
                 {
                   id: '9',
@@ -96,8 +101,10 @@ function App() {
                   },
                   createdAt: new Date("2024-02-09T11:00:00"),
                   comments: [],
+                  parentId: '5', // Добавлено поле parentId
                 },
               ],
+              parentId: '2', // Добавлено поле parentId
             },
             {
               id: '6',
@@ -108,8 +115,10 @@ function App() {
               },
               createdAt: new Date("2024-02-12T09:30:00"),
               comments: [],
+              parentId: '2', // Добавлено поле parentId
             },
           ],
+          parentId: '1', // Добавлено поле parentId
         },
         {
           id: '3',
@@ -129,6 +138,7 @@ function App() {
               },
               createdAt: new Date("2024-02-01T09:45:00"),
               comments: [],
+              parentId: '3', // Добавлено поле parentId
             },
             {
               id: '18',
@@ -148,6 +158,7 @@ function App() {
                   },
                   createdAt: new Date("2024-01-25T08:45:00"),
                   comments: [],
+                  parentId: '18', // Добавлено поле parentId
                 },
                 {
                   id: '25',
@@ -158,6 +169,7 @@ function App() {
                   },
                   createdAt: new Date("2024-01-24T16:30:00"),
                   comments: [],
+                  parentId: '18', // Добавлено поле parentId
                 },
                 {
                   id: '26',
@@ -168,8 +180,10 @@ function App() {
                   },
                   createdAt: new Date("2024-01-23T13:20:00"),
                   comments: [],
+                  parentId: '18', // Добавлено поле parentId
                 },
               ],
+              parentId: '3', // Добавлено поле parentId
             },
             {
               id: '19',
@@ -180,8 +194,10 @@ function App() {
               },
               createdAt: new Date("2024-01-30T13:25:00"),
               comments: [],
+              parentId: '3', // Добавлено поле parentId
             },
           ],
+          parentId: '1', // Добавлено поле parentId
         },
         {
           id: '4',
@@ -219,6 +235,7 @@ function App() {
                       },
                       createdAt: new Date("2024-01-29T10:30:00"),
                       comments: [],
+                      parentId: '12', // Добавлено поле parentId
                     },
                     {
                       id: '21',
@@ -229,6 +246,7 @@ function App() {
                       },
                       createdAt: new Date("2024-01-28T17:15:00"),
                       comments: [],
+                      parentId: '12', // Добавлено поле parentId
                     },
                     {
                       id: '22',
@@ -239,6 +257,7 @@ function App() {
                       },
                       createdAt: new Date("2024-01-27T14:20:00"),
                       comments: [],
+                      parentId: '12', // Добавлено поле parentId
                     },
                     {
                       id: '23',
@@ -249,8 +268,10 @@ function App() {
                       },
                       createdAt: new Date("2024-01-26T11:30:00"),
                       comments: [],
+                      parentId: '12', // Добавлено поле parentId
                     },
                   ],
+                  parentId: '10', // Добавлено поле parentId
                 },
                 {
                   id: '13',
@@ -261,8 +282,10 @@ function App() {
                   },
                   createdAt: new Date("2024-02-05T10:10:00"),
                   comments: [],
+                  parentId: '10', // Добавлено поле parentId
                 },
               ],
+              parentId: '4', // Добавлено поле parentId
             },
             {
               id: '11',
@@ -273,10 +296,13 @@ function App() {
               },
               createdAt: new Date("2024-02-07T16:30:00"),
               comments: [],
+              parentId: '4', // Добавлено поле parentId
             },
           ],
+          parentId: '1', // Добавлено поле parentId
         },
       ],
+      parentId: null, // Добавлено поле parentId
     },
     {
       id: '27',
@@ -287,6 +313,7 @@ function App() {
       },
       createdAt: new Date("2024-01-22T10:10:00"),
       comments: [],
+      parentId: null, // Добавлено поле parentId
     },
     {
       id: '28',
@@ -306,8 +333,10 @@ function App() {
           },
           createdAt: new Date("2024-01-19T12:10:00"),
           comments: [],
+          parentId: '28', // Добавлено поле parentId
         },
       ],
+      parentId: null, // Добавлено поле parentId
     },
     {
       id: '29',
@@ -318,6 +347,7 @@ function App() {
       },
       createdAt: new Date("2024-01-20T15:20:00"),
       comments: [],
+      parentId: null, // Добавлено поле parentId
     },
   ];
 
@@ -328,8 +358,8 @@ function App() {
   return (
     <Container>
       <Paper>
-        <CommentForm isOpen={openModal} handleModal={handleModal} />
-        <CommentsTable comments={mockData} handleModal={handleModal} />
+        <CommentForm actions={actions} isOpen={openModal} handleModal={handleModal} />
+        <CommentsTable actions={actions} comments={mockData} handleModal={handleModal} />
       </Paper>
     </Container>
   );

@@ -11,7 +11,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 //import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import CommentItem from "./CommentItem";
-import { Comment } from "../types/comment";
+import { Comment, CommentActions } from "../types/comments.types";
 import { Box, Button, TableSortLabel } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { useState } from "react";
@@ -119,6 +119,7 @@ import { useState } from "react";
 interface IProps {
   comments: Comment[];
   handleModal: () => void;
+  actions: CommentActions;
 }
 
 const CommentsTable = ({ comments, handleModal }: IProps) => {

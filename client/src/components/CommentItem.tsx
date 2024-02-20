@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { FilePresent, Forum } from "@mui/icons-material";
 import { Box, Button, Stack, Tooltip } from "@mui/material";
-import { Comment } from "../types/comment";
+import { Comment } from "../types/comments.types";
 import { commentItemStyles, ExpandMoreButton } from "./CommentItem.styled";
 import { useState } from "react";
 

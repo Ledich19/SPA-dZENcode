@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { io, Socket } from "Socket.IO-client";
-import { Comment, CommentCreate } from "../types/comment";
+import { Comment, CommentCreate, UseSocketsHook } from "../types/comments.types";
 import { SERVER_URI } from "../constants";
 
 let socket: Socket;
@@ -11,7 +11,7 @@ let socket: Socket;
 // comment:put
 // comment:delete
 
-export const useSockets = () => {
+export const useSockets = (): UseSocketsHook => {
   if (!socket) {
     socket = io(SERVER_URI, {
       query: {
@@ -70,7 +70,7 @@ export const useSockets = () => {
     }
   }
   // получение сообщений
-  const getAll = useCallback((payload: { page: string; count: 24 }) => {
+  const getAll = useCallback((payload: { page: string; count: number }) => {
     socket.emit("comments:get", payload);
   }, []);
 
