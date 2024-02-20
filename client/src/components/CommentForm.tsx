@@ -27,17 +27,29 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
     isEmpty: false,
     minLength: 3,
   });
+  const regEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+  const regUrl = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[\w]*))?)/
+  
   const emailInput = useInput("", {
     isEmpty: false,
     minLength: 3,
+    reGex: {
+      value: regEmail,
+      text: "Mast be email",
+   }
   });
   const homepageInput = useInput("", {
     isEmpty: true,
     minLength: 0,
+    reGex: {
+      value: regUrl,
+      text: "mast be link",
+   }
   });
   const commentInput = useInput("", {
     isEmpty: false,
     minLength: 5,
+
   });
 
   useEffect(() => {
@@ -99,6 +111,7 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
           />
           <TextField
             required
+            type="email" 
             error={emailInput.error && emailInput.isDirty ? true : false}
             value={emailInput.value}
             onBlur={() => emailInput.onBlur()}
