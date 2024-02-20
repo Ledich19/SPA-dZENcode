@@ -72,13 +72,11 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
     if (!e.target.files) return;
     const file = e.target.files[0];
     const reader = new FileReader();
-    console.log("CREATE IMG:");
     reader.onload = (event) => {
       const base64Image = event.target?.result;
 
       if (!base64Image) return;
       const img = new Image();
-      console.log("CREATE IMG: 2");
       img.onload = () => {
         let width = img.width;
         let height = img.height;
@@ -91,13 +89,11 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
           width *= scaleFactor;
           height *= scaleFactor;
         }
-        console.log("CREATE IMG 3");
         const canvas = document.createElement("canvas");
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext("2d");
         ctx?.drawImage(img, 0, 0, width, height);
-        console.log("CREATE IMG: 4");
         canvas.toBlob((blob) => {
           if (!blob) return;
           const fileName = file.name;
@@ -105,12 +101,10 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
           const resizedFile = new File([blob], fileName, { type: fileType });
           setSelectedImg(resizedFile);
         }, file.type);
-        console.log("CREATE IMG: 5");
       };
 
       img.src = base64Image as string;
     };
-    console.log("CREATE IMG: 6");
     reader.readAsDataURL(file);
   };
 

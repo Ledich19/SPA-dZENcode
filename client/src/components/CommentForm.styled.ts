@@ -7,7 +7,6 @@ export const ModalPaper = styled(Paper)(({ theme }) => ({
   position: "relative",
   maxWidth: "700px",
   margin: "0 auto",
-  //height: "100vh",
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing(2),

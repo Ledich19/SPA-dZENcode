@@ -5,12 +5,6 @@ import { SERVER_URI } from "../constants";
 
 let socket: Socket;
 
-// comments:get
-// comment:id
-// comment:post
-// comment:put
-// comment:delete
-
 export const useSockets = (): UseSocketsHook => {
   if (!socket) {
     socket = io(SERVER_URI, {
