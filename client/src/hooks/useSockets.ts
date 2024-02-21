@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { io, Socket } from "Socket.IO-client";
-import { Comment, CommentCreate, UseSocketsHook } from "../types/comments.types";
+import {
+  Comment,
+  CommentCreate,
+  UseSocketsHook,
+} from "../types/comments.types";
 import { SERVER_URI } from "../constants";
 
 let socket: Socket;
@@ -76,7 +80,7 @@ export const useSockets = (): UseSocketsHook => {
 
   // отправка сообщения
   const send = useCallback(
-    (payload: { id: string; rootId: string; data: CommentCreate }) => {
+    (payload: { rootId: string | null; data: CommentCreate }) => {
       socket.emit("comment:post", payload);
     },
     []
@@ -84,7 +88,7 @@ export const useSockets = (): UseSocketsHook => {
 
   // обновление сообщения
   const update = useCallback(
-    (payload: { id: string; rootId: string; data: CommentCreate }) => {
+    (payload: { id: string; rootId: string | null; data: CommentCreate }) => {
       socket.emit("comment:put", payload);
     },
     []

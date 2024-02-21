@@ -8,33 +8,37 @@ export type Comment = {
   };
   createdAt: Date;
   image?: {
-    id:  string;
+    id: string;
     name: string;
-    url:  string;
-  }, 
+    url: string;
+  };
   file?: {
-    id:  string;
+    id: string;
     name: string;
-    url:  string;
-  }, 
+    url: string;
+  };
   comments: Comment[];
-}
+};
 
 export type CommentCreate = {
-  name:  string;
-  email:  string;
-  homePage?:  string;
+  name: string;
+  email: string;
+  homePage?: string;
   text: string;
   image?: File | null;
   file?: string | ArrayBuffer | null;
-  parentId: string;
-}
+  parentId: string | null;
+};
 
 export interface CommentActions {
   getAll: (payload: { page: string; count: number }) => void;
   getById: (payload: { id: string }) => void;
-  send: (payload: { id: string; rootId: string; data: CommentCreate }) => void;
-  update: (payload: { id: string; rootId: string; data: CommentCreate }) => void;
+  send: (payload: { rootId: string | null; data: CommentCreate }) => void;
+  update: (payload: {
+    id: string;
+    rootId: string;
+    data: CommentCreate;
+  }) => void;
   remove: (payload: { id: string }) => void;
 }
 
@@ -43,3 +47,11 @@ export interface UseSocketsHook {
   log: string | undefined;
   actions: CommentActions;
 }
+
+export type ModalState = {
+  isOpen: boolean;
+  rootId: string | null;
+  parentId: string | null;
+};
+
+export type ModalHandler = (rootId?: string | null, parentId?: string | null) => void;

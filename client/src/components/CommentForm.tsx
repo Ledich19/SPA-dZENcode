@@ -6,15 +6,19 @@ import useInput from "../hooks/useInput";
 import ErrorMessage from "./ErrorMessage";
 import { AddPhotoAlternate, AttachFile, Cancel } from "@mui/icons-material";
 import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, MAX_FILE_SIZE } from "../constants";
-import { CommentActions } from "../types/comments.types";
+import { CommentActions, ModalState } from "../types/comments.types";
 
 interface IProps {
-  isOpen: boolean;
+  modal: ModalState;
   handleModal: () => void;
   actions: CommentActions;
 }
 
-const CommentForm = ({ isOpen, handleModal }: IProps) => {
+const CommentForm = ({ modal, handleModal, actions }: IProps) => {
+  const regEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+  const regUrl =
+    /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[\w]*))?)/;
+
   const [selectedImg, setSelectedImg] = useState<File | null>(null);
   const inputImgRef = useRef<HTMLInputElement>(null);
   const [selectedTxt, setSelectedTxt] = useState<string | ArrayBuffer | null>(
@@ -25,9 +29,6 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
     isEmpty: false,
     minLength: 3,
   });
-  const regEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-  const regUrl =
-    /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[\w]*))?)/;
 
   const emailInput = useInput("", {
     isEmpty: false,
@@ -49,6 +50,10 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
     isEmpty: false,
     minLength: 5,
   });
+
+  // useEffect(() => {
+
+  // },[])
   // useEffect(() => {
   //   if (!selectedImg) return
   //   const imgElement = document.createElement("img");
@@ -56,17 +61,13 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
   //   document.body.appendChild(imgElement);
   // },[selectedImg])
   useEffect(() => {
-    if (isOpen) {
+    if (modal.isOpen) {
       nameInput.clear();
       emailInput.clear();
       homepageInput.clear();
       commentInput.clear();
     }
-  }, [isOpen]);
-
-  const handleAddComment = () => {
-    throw new Error("---need make handleAddComment---");
-  };
+  }, [modal.isOpen]);
 
   const handleSelectImg = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -119,7 +120,9 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
     if (!e.target.files) return;
     const file = e.target.files[0];
     if (file.size > MAX_FILE_SIZE) {
-      alert("The file is too large. Please select a file no larger than 100 KB.");
+      alert(
+        "The file is too large. Please select a file no larger than 100 KB."
+      );
       return;
     }
     const reader = new FileReader();
@@ -138,9 +141,23 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
       inputTxtRef.current.value = "";
     }
   };
+
+  const handleSubmit = () => {
+    const comment = {
+      name: nameInput.value || "",
+      email: emailInput.value || "",
+      homePage: homepageInput.value || "",
+      text: commentInput.value || "",
+      image: selectedImg,
+      file: selectedTxt,
+      parentId: modal.parentId,
+    };
+    actions.send({ rootId: modal.rootId, data: comment });
+  };
+
   return (
     <Modal
-      open={isOpen ? true : false}
+      open={modal.isOpen ? true : false}
       onClose={handleModal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
@@ -264,7 +281,14 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
             </Button>
           )}
         </Box>
-        <Button onClick={handleAddComment}>Add comment</Button>
+        <Button
+          disabled={
+            !!nameInput.error || !!emailInput.error || !!commentInput.error
+          }
+          onClick={handleSubmit}
+        >
+          Add comment
+        </Button>
       </ModalPaper>
     </Modal>
   );

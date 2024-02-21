@@ -6,14 +6,14 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import CommentItem from "./CommentItem";
-import { Comment, CommentActions } from "../types/comments.types";
+import { Comment, CommentActions, ModalHandler } from "../types/comments.types";
 import { Box, Button, TableSortLabel } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { useState } from "react";
 
 interface IProps {
   comments: Comment[];
-  handleModal: () => void;
+  handleModal: ModalHandler;
   actions: CommentActions;
 }
 
