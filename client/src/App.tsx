@@ -2,7 +2,7 @@ import "./App.scss";
 import { Container, Paper } from "@mui/material";
 import CommentsTable from "./components/CommentsTable";
 import CommentForm from "./components/CommentForm";
-import { useState } from "react";
+import {  useState } from "react";
 import { useSockets } from "./hooks/useSockets";
 import { ModalState } from "./types/comments.types";
 const mockData = [
@@ -355,7 +355,7 @@ function App() {
     parentId: null,
   });
   const { comments, log, actions } = useSockets();
-
+  
   const handleModal = (
     rootId: string | null = null,
     parentId: string | null = null

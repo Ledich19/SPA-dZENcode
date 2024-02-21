@@ -7,6 +7,7 @@ import ErrorMessage from "./ErrorMessage";
 import { AddPhotoAlternate, AttachFile, Cancel } from "@mui/icons-material";
 import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, MAX_FILE_SIZE } from "../constants";
 import { CommentActions, ModalState } from "../types/comments.types";
+import Captcha from "./Captcha";
 
 interface IProps {
   modal: ModalState;
@@ -50,16 +51,12 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
     isEmpty: false,
     minLength: 5,
   });
+  const captchaInput = useInput("", {
+    isEmpty: true,
+    minLength: 4,
+    maxLength: 4,
+  });
 
-  // useEffect(() => {
-
-  // },[])
-  // useEffect(() => {
-  //   if (!selectedImg) return
-  //   const imgElement = document.createElement("img");
-  //   imgElement.src = URL.createObjectURL(selectedImg);
-  //   document.body.appendChild(imgElement);
-  // },[selectedImg])
   useEffect(() => {
     if (modal.isOpen) {
       nameInput.clear();
@@ -151,6 +148,7 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
       image: selectedImg,
       file: selectedTxt,
       parentId: modal.parentId,
+      captcha: captchaInput.value || "",
     };
     actions.send({ rootId: modal.rootId, data: comment });
   };
@@ -214,76 +212,96 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
             <ErrorMessage error={commentInput.error} />
           )}
         </Stack>
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-          <Tooltip title="Додати картинку">
-            <label style={{ height: "100%", margin: 0 }} htmlFor="imageInput">
-              <input
-                ref={inputImgRef}
-                type="file"
-                id="imageInput"
-                accept="image/jpeg, image/gif, image/png"
-                style={{ display: "none" }}
-                onChange={handleSelectImg}
-              />
+        <Box display="flex" justifyContent="space-between">
+          <Box display="flex">
+            <Captcha />
+            <TextField
+              required
+              error={captchaInput.error && captchaInput.isDirty ? true : false}
+              value={captchaInput.value}
+              onBlur={() => captchaInput.onBlur()}
+              onChange={(e) => captchaInput.onChange(e.target.value)}
+              helperText={captchaInput.error}
+              id="captcha-page"
+              label="Captcha"
+              variant="outlined"
+            />
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Tooltip title="Додати картинку">
+              <label style={{ height: "100%", margin: 0 }} htmlFor="imageInput">
+                <input
+                  ref={inputImgRef}
+                  type="file"
+                  id="imageInput"
+                  accept="image/jpeg, image/gif, image/png"
+                  style={{ display: "none" }}
+                  onChange={handleSelectImg}
+                />
 
-              {!selectedImg && (
-                <Button
-                  component="span"
-                  style={{ height: "100%", margin: 0 }}
-                  aria-label="load img"
-                >
-                  <AddPhotoAlternate />
-                </Button>
-              )}
-            </label>
-          </Tooltip>
-          {selectedImg && (
-            <Button
-              component="span"
-              style={{ height: "100%", margin: 0 }}
-              onClick={handleCancelImg}
-              aria-label="cancel"
-            >
-              <Cancel />
-            </Button>
-          )}
+                {!selectedImg && (
+                  <Button
+                    component="span"
+                    style={{ height: "100%", margin: 0 }}
+                    aria-label="load img"
+                  >
+                    <AddPhotoAlternate />
+                  </Button>
+                )}
+              </label>
+            </Tooltip>
+            {selectedImg && (
+              <Button
+                component="span"
+                style={{ height: "100%", margin: 0 }}
+                onClick={handleCancelImg}
+                aria-label="cancel"
+              >
+                <Cancel />
+              </Button>
+            )}
 
-          <Tooltip title="add txt file">
-            <label style={{ height: "100%", margin: 0 }} htmlFor="textInput">
-              <input
-                ref={inputTxtRef}
-                type="file"
-                id="textInput"
-                accept=".txt"
-                style={{ display: "none" }}
-                onChange={handleSelectTxt}
-              />
+            <Tooltip title="add txt file">
+              <label style={{ height: "100%", margin: 0 }} htmlFor="textInput">
+                <input
+                  ref={inputTxtRef}
+                  type="file"
+                  id="textInput"
+                  accept=".txt"
+                  style={{ display: "none" }}
+                  onChange={handleSelectTxt}
+                />
 
-              {!selectedTxt && (
-                <Button
-                  component="span"
-                  style={{ height: "100%", margin: 0 }}
-                  aria-label="load file"
-                >
-                  <AttachFile />
-                </Button>
-              )}
-            </label>
-          </Tooltip>
-          {selectedTxt && (
-            <Button
-              component="span"
-              style={{ height: "100%", margin: 0 }}
-              aria-label="cancel"
-              onClick={handleCancelTxt}
-            >
-              <Cancel />
-            </Button>
-          )}
+                {!selectedTxt && (
+                  <Button
+                    component="span"
+                    style={{ height: "100%", margin: 0 }}
+                    aria-label="load file"
+                  >
+                    <AttachFile />
+                  </Button>
+                )}
+              </label>
+            </Tooltip>
+            {selectedTxt && (
+              <Button
+                component="span"
+                style={{ height: "100%", margin: 0 }}
+                aria-label="cancel"
+                onClick={handleCancelTxt}
+              >
+                <Cancel />
+              </Button>
+            )}
+          </Box>
         </Box>
+
         <Button
           disabled={
-            !!nameInput.error || !!emailInput.error || !!commentInput.error
+            !!nameInput.error ||
+            !!emailInput.error ||
+            !!commentInput.error ||
+            !!captchaInput.error
           }
           onClick={handleSubmit}
         >
