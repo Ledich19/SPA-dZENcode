@@ -27,6 +27,7 @@ export const useSockets = (): UseSocketsHook => {
       setLog(log);
     });
 
+
     // получение обновлений
     socket.on(
       "comment:post",
@@ -98,8 +99,7 @@ export const useSockets = (): UseSocketsHook => {
   const remove = useCallback((payload: { id: string }) => {
     socket.emit("comment:delete", payload);
   }, []);
-
-  // операции
+ 
   const actions = useMemo(
     () => ({
       getAll,

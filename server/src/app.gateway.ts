@@ -10,12 +10,14 @@ import {
 //import { Prisma } from '@prisma/client';
 import { Server, Socket } from 'Socket.IO';
 import { AppService } from './app.service';
+import * as svgCaptcha from 'svg-captcha';
+import { CaptchaService } from './captcha/captcha.service';
 
 const users: Record<string, string> = {};
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:5173',
   },
   serveClient: false,
   namespace: 'comments',
@@ -23,7 +25,10 @@ const users: Record<string, string> = {};
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly captchaService: CaptchaService,
+  ) {}
 
   @WebSocketServer() server: Server;
 
@@ -88,5 +93,14 @@ export class AppGateway
   ) {
     const removedComment = await this.appService.removeComment(payload.id);
     this.server.emit('comment:delete', removedComment);
+  }
+
+  @SubscribeMessage('captcha:get')
+  async handleCaptchaGet(client: Socket) {
+    const sessionId = client.id;
+    const captcha = svgCaptcha.create();
+    this.captchaService.storeCaptcha(sessionId, captcha.text);
+    this.server.emit('captcha:get', { data: captcha.data });
+    console.log('captcha', captcha.data);
   }
 }

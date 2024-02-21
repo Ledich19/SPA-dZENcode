@@ -27,6 +27,7 @@ export type CommentCreate = {
   text: string;
   image?: File | null;
   file?: string | ArrayBuffer | null;
+  captcha: string;
   parentId: string | null;
 };
 
@@ -53,5 +54,13 @@ export type ModalState = {
   rootId: string | null;
   parentId: string | null;
 };
+
+export interface CaptchaSocketData {
+  captcha: string | null;
+  log?: string;
+  actions: {
+    captchaGet: () => void;
+  };
+}
 
 export type ModalHandler = (rootId?: string | null, parentId?: string | null) => void;
