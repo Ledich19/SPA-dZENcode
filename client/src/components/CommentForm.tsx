@@ -1,42 +1,42 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import {
-  Box,
-  Button,
-  Modal,
-  Stack,
-  TextField,
-  Tooltip,
-} from "@mui/material";
+import { Box, Button, Modal, Stack, TextField, Tooltip } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import { CloseBtn, ModalPaper, StyledTextarea } from "./CommentForm.styled";
 import useInput from "../hooks/useInput";
 import ErrorMessage from "./ErrorMessage";
 import { AddPhotoAlternate, AttachFile, Cancel } from "@mui/icons-material";
+import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, MAX_FILE_SIZE } from "../constants";
+import { CommentActions, ModalState } from "../types/comments.types";
 
 interface IProps {
-  isOpen: boolean;
+  modal: ModalState;
   handleModal: () => void;
+  actions: CommentActions;
 }
 
-const CommentForm = ({ isOpen, handleModal }: IProps) => {
+const CommentForm = ({ modal, handleModal, actions }: IProps) => {
+  const regEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+  const regUrl =
+    /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[\w]*))?)/;
+
   const [selectedImg, setSelectedImg] = useState<File | null>(null);
   const inputImgRef = useRef<HTMLInputElement>(null);
-  const [selectedTxt, setSelectedTxt] = useState<File | null>(null);
+  const [selectedTxt, setSelectedTxt] = useState<string | ArrayBuffer | null>(
+    null
+  );
   const inputTxtRef = useRef<HTMLInputElement>(null);
   const nameInput = useInput("", {
     isEmpty: false,
     minLength: 3,
   });
-  const regEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
-  const regUrl = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[\w]*))?)/
-  
+
   const emailInput = useInput("", {
     isEmpty: false,
     minLength: 3,
     reGex: {
       value: regEmail,
       text: "Mast be email",
-   }
+    },
   });
   const homepageInput = useInput("", {
     isEmpty: true,
@@ -44,50 +44,120 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
     reGex: {
       value: regUrl,
       text: "mast be link",
-   }
+    },
   });
   const commentInput = useInput("", {
     isEmpty: false,
     minLength: 5,
-
   });
 
+  // useEffect(() => {
+
+  // },[])
+  // useEffect(() => {
+  //   if (!selectedImg) return
+  //   const imgElement = document.createElement("img");
+  //   imgElement.src = URL.createObjectURL(selectedImg);
+  //   document.body.appendChild(imgElement);
+  // },[selectedImg])
   useEffect(() => {
-    if (isOpen) {
+    if (modal.isOpen) {
       nameInput.clear();
       emailInput.clear();
       homepageInput.clear();
       commentInput.clear();
     }
-  }, [isOpen]);
-
-  const handleAddComment = () => {
-    throw new Error("---need make handleAddComment---");
-  };
+  }, [modal.isOpen]);
 
   const handleSelectImg = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    setSelectedImg(e.target.files[0]);
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Image = event.target?.result;
+
+      if (!base64Image) return;
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > IMG_MAX_WIDTH || height > IMG_MAX_HEIGHT) {
+          const scaleFactor = Math.min(
+            IMG_MAX_WIDTH / width,
+            IMG_MAX_HEIGHT / height
+          );
+          width *= scaleFactor;
+          height *= scaleFactor;
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob) => {
+          if (!blob) return;
+          const fileName = file.name;
+          const fileType = file.type;
+          const resizedFile = new File([blob], fileName, { type: fileType });
+          setSelectedImg(resizedFile);
+        }, file.type);
+      };
+
+      img.src = base64Image as string;
+    };
+    reader.readAsDataURL(file);
   };
+
   const handleCancelImg = () => {
     setSelectedImg(null);
     if (inputImgRef.current) {
       inputImgRef.current.value = "";
     }
   };
+
   const handleSelectTxt = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    setSelectedTxt(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file.size > MAX_FILE_SIZE) {
+      alert(
+        "The file is too large. Please select a file no larger than 100 KB."
+      );
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const fileData = event.target?.result;
+      if (fileData) {
+        setSelectedTxt(fileData);
+      }
+    };
+    reader.readAsArrayBuffer(file);
   };
+
   const handleCancelTxt = () => {
     setSelectedImg(null);
     if (inputTxtRef.current) {
       inputTxtRef.current.value = "";
     }
   };
+
+  const handleSubmit = () => {
+    const comment = {
+      name: nameInput.value || "",
+      email: emailInput.value || "",
+      homePage: homepageInput.value || "",
+      text: commentInput.value || "",
+      image: selectedImg,
+      file: selectedTxt,
+      parentId: modal.parentId,
+    };
+    actions.send({ rootId: modal.rootId, data: comment });
+  };
+
   return (
     <Modal
-      open={isOpen ? true : false}
+      open={modal.isOpen ? true : false}
       onClose={handleModal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
@@ -111,7 +181,7 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
           />
           <TextField
             required
-            type="email" 
+            type="email"
             error={emailInput.error && emailInput.isDirty ? true : false}
             value={emailInput.value}
             onBlur={() => emailInput.onBlur()}
@@ -211,7 +281,14 @@ const CommentForm = ({ isOpen, handleModal }: IProps) => {
             </Button>
           )}
         </Box>
-        <Button onClick={handleAddComment}>Add comment</Button>
+        <Button
+          disabled={
+            !!nameInput.error || !!emailInput.error || !!commentInput.error
+          }
+          onClick={handleSubmit}
+        >
+          Add comment
+        </Button>
       </ModalPaper>
     </Modal>
   );

@@ -9,13 +9,13 @@ import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { FilePresent, Forum } from "@mui/icons-material";
 import { Box, Button, Stack, Tooltip } from "@mui/material";
-import { Comment } from "../types/comment";
+import { Comment, ModalHandler } from "../types/comments.types";
 import { commentItemStyles, ExpandMoreButton } from "./CommentItem.styled";
 import { useState } from "react";
 
 interface IProps {
   comment: Comment;
-  handleModal: () => void;
+  handleModal: ModalHandler;
 }
 
 const CommentItem = ({ comment, handleModal }: IProps) => {
@@ -68,7 +68,7 @@ const CommentItem = ({ comment, handleModal }: IProps) => {
           sx={{ marginLeft: "auto" }}
         >
           <Tooltip title="reply to comment">
-            <IconButton onClick={handleModal} aria-label="reply to comment">
+            <IconButton onClick={() => handleModal('',comment.id)} aria-label="reply to comment">
               <Forum />
             </IconButton>
           </Tooltip>
