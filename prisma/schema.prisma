@@ -10,19 +10,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Root {
+  id      Int      @id @default(autoincrement())
+  rootId  String   @unique
+  comment Comment  @relation(fields: [rootId], references: [id])
+}
+
 model User {
   id String @id @default(uuid())
   name String @unique
   email String @unique
   homePage String?
-  albums  Comment[]
+  comments  Comment[]
+}
+
+model Image {
+  id     String @id @default(uuid())
+  path    String
+  name    String
+  comments Comment[]
+}
+
+model File {
+  id       String @id @default(uuid())
+  path     String
+  name    String
+  comments Comment[]
 }
 
 model Comment {
   id      String @id @default(uuid())
   text    String
+
   userId String
   user  User @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+  imageId   String?
+  image     Image?   @relation(fields: [imageId], references: [id])
+  fileId    String?
+  file      File?    @relation(fields: [fileId], references: [id])
+  root     Root?
+
+  parentId  String?
+  parent    Comment?  @relation("ParentComment", fields: [parentId], references: [id])
+  comments  Comment[] @relation("ParentComment")
+
+  createdAt DateTime  @default(now())
   updatedAt DateTime @updatedAt
 }
