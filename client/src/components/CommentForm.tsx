@@ -150,7 +150,11 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
       parentId: modal.parentId,
       captcha: captchaInput.value || "",
     };
-    actions.send({ rootId: modal.rootId, data: comment });
+    
+    const rootId = modal.rootId || null;
+    console.log(rootId);
+    
+    actions.send({ rootId: null, data: comment });
   };
 
   return (

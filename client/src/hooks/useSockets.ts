@@ -27,7 +27,6 @@ export const useSockets = (): UseSocketsHook => {
       setLog(log);
     });
 
-
     // получение обновлений
     socket.on(
       "comment:post",
@@ -82,7 +81,8 @@ export const useSockets = (): UseSocketsHook => {
   // отправка сообщения
   const send = useCallback(
     (payload: { rootId: string | null; data: CommentCreate }) => {
-      socket.emit("comment:post", payload);
+      console.log("SENd");
+      socket.emit("comment:post", {rootId: payload.rootId,data: payload.data});
     },
     []
   );
@@ -99,7 +99,7 @@ export const useSockets = (): UseSocketsHook => {
   const remove = useCallback((payload: { id: string }) => {
     socket.emit("comment:delete", payload);
   }, []);
- 
+
   const actions = useMemo(
     () => ({
       getAll,

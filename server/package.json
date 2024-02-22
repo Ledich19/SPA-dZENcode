@@ -28,6 +28,7 @@
     "dotenv": "^16.4.5",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
+    "sharp": "^0.33.2",
     "svg-captcha": "^1.4.0"
   },
   "devDependencies": {
