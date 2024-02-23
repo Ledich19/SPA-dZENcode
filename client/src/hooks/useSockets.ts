@@ -18,7 +18,7 @@ export const useSockets = (): UseSocketsHook => {
     });
   }
 
-  const [comments, setComments] = useState<Comment[]>();
+  const [comments, setComments] = useState<Comment[]>([]);
   const [log, setLog] = useState<string>();
 
   useEffect(() => {
@@ -49,6 +49,7 @@ export const useSockets = (): UseSocketsHook => {
 
     // получение сообщений
     socket.on("comments:get", (payload: { type: string; data: Comment[] }) => {
+      console.log('======', payload.data);
       setComments(payload.data);
     });
     socket.emit("comments:get");
@@ -68,7 +69,7 @@ export const useSockets = (): UseSocketsHook => {
     }
   }
   // получение сообщений
-  const getAll = useCallback((payload: { page: string; count: number }) => {
+  const getAll = useCallback((payload: { page: number; pageSize: number }) => {
     socket.emit("comments:get", payload);
   }, []);
 

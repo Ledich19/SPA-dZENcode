@@ -12,7 +12,6 @@ import { Server, Socket } from 'Socket.IO';
 import { AppService } from './app.service';
 import * as svgCaptcha from 'svg-captcha';
 import { CaptchaService } from './captcha/captcha.service';
-import { FileService } from './files/app.service';
 
 const users: Record<string, string> = {};
 
@@ -29,7 +28,6 @@ export class AppGateway
   constructor(
     private readonly appService: AppService,
     private readonly captchaService: CaptchaService,
-    private readonly fileService: FileService,
   ) {}
 
   @WebSocketServer() server: Server;
@@ -53,9 +51,15 @@ export class AppGateway
   }
 
   @SubscribeMessage('comments:get')
-  async handleCommentsGet() {
-    const comments = await this.appService.getRootComments();
-    this.server.emit('comments', comments);
+  async handleCommentsGet(
+    @MessageBody()
+    payload,
+  ) {
+    const { page, pageSize } = payload;
+    const comments = await this.appService.getRootComments(page, pageSize);
+    console.log('======', comments);
+
+    this.server.emit('comments:get', { data: comments });
   }
 
   @SubscribeMessage('comment:id')
@@ -72,23 +76,6 @@ export class AppGateway
     @MessageBody()
     payload,
   ) {
-    // export type CommentCreate = {
-    //   name: string;
-    //   email: string;
-    //   homePage?: string;
-    //   text: string;
-    //   image?: File | null;
-    //   file?: string | ArrayBuffer | null;
-    //   captcha: string;
-    //   parentId: string | null;
-    // };
-    if (payload.data.image) {
-      this.fileService.saveImage(payload.data.image);
-    }
-    if (payload.data.file) {
-      this.fileService.saveTextFile(payload.data.file);
-    }
-
     const createdComment = await this.appService.createComment(payload);
     this.server.emit('comment:post', createdComment);
   }

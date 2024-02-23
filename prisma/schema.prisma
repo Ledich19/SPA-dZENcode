@@ -28,14 +28,16 @@ model Image {
   id     String @id @default(uuid())
   path    String
   name    String
-  comments Comment[]
+  comment  Comment? @relation(fields: [commentId], references: [id])
+  commentId String? @unique
 }
 
 model File {
   id       String @id @default(uuid())
   path     String
   name    String
-  comments Comment[]
+  comment  Comment? @relation(fields: [commentId], references: [id])
+  commentId String? @unique
 }
 
 model Comment {
@@ -44,10 +46,9 @@ model Comment {
 
   userId String
   user  User @relation(fields: [userId], references: [id])
-  imageId   String?
-  image     Image?   @relation(fields: [imageId], references: [id])
-  fileId    String?
-  file      File?    @relation(fields: [fileId], references: [id])
+
+  image     Image?
+  file      File?
   root     Root?
 
   parentId  String?

@@ -32,7 +32,7 @@ export type CommentCreate = {
 };
 
 export interface CommentActions {
-  getAll: (payload: { page: string; count: number }) => void;
+  getAll: (payload: { page: number; pageSize: number }) => void;
   getById: (payload: { id: string }) => void;
   send: (payload: { rootId: string | null; data: CommentCreate }) => void;
   update: (payload: {

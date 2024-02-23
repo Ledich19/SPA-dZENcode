@@ -36,7 +36,13 @@ const CommentItem = ({ comment, handleModal }: IProps) => {
           </Avatar>
         }
         title={comment.user.name}
-        subheader={comment.createdAt.toISOString()}
+        subheader={new Date(comment.createdAt).toLocaleDateString("ru-RU", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+        })}
       />
       <CardContent sx={commentItemStyles.cardContent}>
         <Box
@@ -45,7 +51,7 @@ const CommentItem = ({ comment, handleModal }: IProps) => {
           key={"https://images.unsplash.com/photo-1551963831-b3b1ca40c98e"}
         >
           <img
-            src={`https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=164&h=164&fit=crop&auto=format`}
+            src={`http://localhost:3001/${comment.image?.path}`}
             style={commentItemStyles.image}
             alt={"item.title"}
           />
@@ -56,7 +62,7 @@ const CommentItem = ({ comment, handleModal }: IProps) => {
       </CardContent>
 
       <CardActions disableSpacing>
-         <Tooltip title="file name">
+        <Tooltip title="file name">
           <Button aria-label="filename">
             <FilePresent /> Filename.txt
           </Button>
@@ -68,7 +74,10 @@ const CommentItem = ({ comment, handleModal }: IProps) => {
           sx={{ marginLeft: "auto" }}
         >
           <Tooltip title="reply to comment">
-            <IconButton onClick={() => handleModal('',comment.id)} aria-label="reply to comment">
+            <IconButton
+              onClick={() => handleModal("", comment.id)}
+              aria-label="reply to comment"
+            >
               <Forum />
             </IconButton>
           </Tooltip>
@@ -92,7 +101,11 @@ const CommentItem = ({ comment, handleModal }: IProps) => {
       >
         <Box sx={{ paddingLeft: 4 }}>
           {comment.comments?.map((child) => (
-            <CommentItem key={child.id} comment={child} handleModal={handleModal} />
+            <CommentItem
+              key={child.id}
+              comment={child}
+              handleModal={handleModal}
+            />
           ))}
         </Box>
       </Collapse>

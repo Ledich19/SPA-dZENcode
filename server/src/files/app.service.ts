@@ -7,7 +7,7 @@ import * as fs from 'fs';
 export class FileService {
   async saveImage(image: Buffer, type: string = 'jpg') {
     try {
-      const publicPath = 'public/images';
+      const publicPath = 'public/images/';
       if (!fs.existsSync(publicPath)) {
         await fs.promises.mkdir(publicPath, { recursive: true });
       }
@@ -18,11 +18,15 @@ export class FileService {
         .toBuffer();
 
       await fs.promises.writeFile(
-        `${publicPath}/${uniqueId}.${type}`,
+        `${publicPath}${uniqueId}.${type}`,
         resizedImageBuffer,
       );
 
-      return { message: 'File saved successfully', id: uniqueId };
+      return {
+        message: 'File saved successfully',
+        path: `images/${uniqueId}.${type}`,
+        name: `${uniqueId}.${type}`,
+      };
     } catch (error) {
       console.error('Error saving file:', error);
       throw error;
@@ -51,7 +55,11 @@ export class FileService {
         textBuffer,
       );
 
-      return { message: 'File saved successfully', id: uniqueId };
+      return {
+        message: 'File saved successfully',
+        path: `documents/${uniqueId}---${fileName}.txt`,
+        name: fileName,
+      };
     } catch (error) {
       console.error('Error saving file:', error);
       throw error;
