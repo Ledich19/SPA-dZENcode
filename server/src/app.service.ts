@@ -13,21 +13,22 @@ export class AppService {
     private readonly fileService: FileService,
   ) {}
 
-  getRootComments(page: number = 0, count: number = 24) {
+  async getRootComments(page: number = 0, count: number = 24) {
     const skip = (page - 1) * count;
-    return this.prisma.comment.findMany({
+    const comments = await this.prisma.root.findMany({
       skip,
       take: count,
       include: {
-        comments: true,
-        user: true,
-        image: true,
-        file: true,
+        comment: {
+          include: { user: true, image: true, file: true, comments: true },
+        },
       },
     });
+    return comments.map((comment) => comment.comment);
   }
 
   async getCommentById(id: string) {
+    console.log('id: string', id);
     try {
       return await this.prisma.comment.findUnique({
         where: {
@@ -37,6 +38,14 @@ export class AppService {
           user: true,
           image: true,
           file: true,
+          comments: {
+            include: {
+              user: true,
+              image: true,
+              file: true,
+              comments: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -84,7 +93,7 @@ export class AppService {
       data: {
         userId: existingUser.id,
         text: dto.data.text,
-        parentId: dto.data.parent,
+        parentId: dto.data.parentId,
         image: imageObj
           ? {
               connect: {
@@ -107,6 +116,7 @@ export class AppService {
         data: { rootId: comment.id },
       });
     }
+
     return comment;
   }
 

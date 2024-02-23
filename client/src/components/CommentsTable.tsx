@@ -17,7 +17,7 @@ interface IProps {
   actions: CommentActions;
 }
 
-const CommentsTable = ({ comments, handleModal }: IProps) => {
+const CommentsTable = ({ comments, handleModal, actions }: IProps) => {
   type Order = "asc" | "desc";
   type SortBy = "User mname" | "E-mail" | "created data";
   const [order, setOrder] = useState<Order>("asc");
@@ -98,7 +98,7 @@ const CommentsTable = ({ comments, handleModal }: IProps) => {
               </TableCell>
 
               <TableCell>
-                <Button onClick={handleModal}>Add comment</Button>
+                <Button onClick={() => handleModal(null)}>Add comment</Button>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -106,7 +106,11 @@ const CommentsTable = ({ comments, handleModal }: IProps) => {
             {comments.map((comment) => (
               <TableRow key={comment.id}>
                 <TableCell colSpan={4}>
-                  <CommentItem comment={comment} handleModal={handleModal} />
+                  <CommentItem
+                    comment={comment}
+                    handleModal={handleModal}
+                    actions={actions}
+                  />
                 </TableCell>
               </TableRow>
             ))}

@@ -10,7 +10,6 @@ import { PAGE_SIZE_DEFAULT } from "./constants";
 function App() {
   const [modal, setModal] = useState<ModalState>({
     isOpen: false,
-    rootId: null,
     parentId: null,
   });
   const { comments, log, actions } = useSockets();
@@ -19,11 +18,8 @@ function App() {
     actions.getAll({ page: 1, pageSize: PAGE_SIZE_DEFAULT });
   }, []);
 
-  const handleModal = (
-    rootId: string | null = null,
-    parentId: string | null = null
-  ) => {
-    setModal((value) => ({ isOpen: !value.isOpen, rootId, parentId }));
+  const handleModal = (parentId: string | null) => {
+    setModal((value) => ({ isOpen: !value.isOpen, parentId }));
   };
 
   return (

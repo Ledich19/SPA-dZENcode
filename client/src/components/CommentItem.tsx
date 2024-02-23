@@ -9,19 +9,21 @@ import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { FilePresent, Forum } from "@mui/icons-material";
 import { Box, Button, Stack, Tooltip } from "@mui/material";
-import { Comment, ModalHandler } from "../types/comments.types";
+import { Comment, CommentActions, ModalHandler } from "../types/comments.types";
 import { commentItemStyles, ExpandMoreButton } from "./CommentItem.styled";
 import { useState } from "react";
 
 interface IProps {
   comment: Comment;
   handleModal: ModalHandler;
+  actions: CommentActions;
 }
 
-const CommentItem = ({ comment, handleModal }: IProps) => {
+const CommentItem = ({ comment, handleModal, actions }: IProps) => {
   const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => {
+    actions.getById({ id: comment.id });
     setExpanded(!expanded);
   };
 
@@ -32,10 +34,10 @@ const CommentItem = ({ comment, handleModal }: IProps) => {
         sx={commentItemStyles.cardHeader}
         avatar={
           <Avatar sx={commentItemStyles.avatar} aria-label="recipe">
-            {comment.user.name[0]}
+            {comment.user?.name[0] || ""}
           </Avatar>
         }
-        title={comment.user.name}
+        title={comment.user?.name || ""}
         subheader={new Date(comment.createdAt).toLocaleDateString("ru-RU", {
           year: "numeric",
           month: "long",
@@ -75,13 +77,13 @@ const CommentItem = ({ comment, handleModal }: IProps) => {
         >
           <Tooltip title="reply to comment">
             <IconButton
-              onClick={() => handleModal("", comment.id)}
+              onClick={() => handleModal(comment.id)}
               aria-label="reply to comment"
             >
               <Forum />
             </IconButton>
           </Tooltip>
-          <Box component="span">{comment.comments.length}</Box>
+          <Box component="span">{comment.comments?.length || "0"}</Box>
           <ExpandMoreButton
             expand={expanded}
             onClick={handleExpandClick}
@@ -100,13 +102,17 @@ const CommentItem = ({ comment, handleModal }: IProps) => {
         sx={commentItemStyles.collapse}
       >
         <Box sx={{ paddingLeft: 4 }}>
-          {comment.comments?.map((child) => (
-            <CommentItem
-              key={child.id}
-              comment={child}
-              handleModal={handleModal}
-            />
-          ))}
+          {comment.comments &&
+            comment.comments.map((child) => {
+              return (
+                <CommentItem
+                  key={child.id}
+                  comment={child}
+                  handleModal={handleModal}
+                  actions={actions}
+                />
+              );
+            })}
         </Box>
       </Collapse>
     </Card>

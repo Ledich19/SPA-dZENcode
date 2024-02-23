@@ -22,71 +22,60 @@ export const useSockets = (): UseSocketsHook => {
   const [log, setLog] = useState<string>();
 
   useEffect(() => {
-    // подключение/отключение пользователя
     socket.on("log", (log: string) => {
       setLog(log);
     });
 
     // получение обновлений
-    socket.on(
-      "comment:post",
-      (payload: { type: string; rootId: string; data: Comment }) => {
-        const root = comments?.find((comment) => comment.id === payload.rootId);
-        if (!root) return;
-        insertCommentByParentId(root, payload.rootId, payload.data);
-      }
-    );
+    socket.on("comment:post", (payload: Comment) => {
+      console.log("POST", payload.parentId);
+
+      socket.emit("comment:id", { id: payload.parentId });
+    });
 
     // получение по id
-    socket.on(
-      "comment:id",
-      (payload: { type: string; rootId: string; data: Comment }) => {
-        const root = comments?.find((comment) => comment.id === payload.rootId);
-        if (!root) return;
-        insertCommentByParentId(root, payload.rootId, payload.data);
-      }
-    );
+    socket.on("comment:id", (payload: Comment) => {
+      setComments((prevComments) => {
+        const updatedComments = [...prevComments];
+        const updateCommentByParentId = (rootComment: Comment) => {
+          if (rootComment && rootComment.id === payload.id) {
+            rootComment.comments = payload.comments;
+            return;
+          }
+          if (!rootComment.comments) return;
+          for (const subComment of rootComment.comments) {
+            updateCommentByParentId(subComment);
+          }
+        };
+        updatedComments.forEach(updateCommentByParentId);
+        return updatedComments;
+      });
+    });
 
     // получение сообщений
     socket.on("comments:get", (payload: { type: string; data: Comment[] }) => {
-      console.log('======', payload.data);
       setComments(payload.data);
     });
     socket.emit("comments:get");
   }, []);
 
-  function insertCommentByParentId(
-    comment: Comment,
-    parentId: string,
-    newComment: Comment
-  ): void {
-    if (comment.id === parentId) {
-      comment.comments.push(newComment);
-      return;
-    }
-    for (const subComment of comment.comments) {
-      insertCommentByParentId(subComment, parentId, newComment);
-    }
-  }
   // получение сообщений
   const getAll = useCallback((payload: { page: number; pageSize: number }) => {
     socket.emit("comments:get", payload);
+    // подключение/отключение пользователя
   }, []);
 
   // получение сообщений
   const getById = useCallback((payload: { id: string }) => {
     console.log("socket.emit(comment:id, payload);");
+
     socket.emit("comment:id", payload);
   }, []);
 
   // отправка сообщения
-  const send = useCallback(
-    (payload: { rootId: string | null; data: CommentCreate }) => {
-      console.log("SENd");
-      socket.emit("comment:post", {rootId: payload.rootId,data: payload.data});
-    },
-    []
-  );
+  const send = useCallback((payload: { data: CommentCreate }) => {
+    socket.emit("comment:post", payload);
+  }, []);
 
   // обновление сообщения
   const update = useCallback(

@@ -31,7 +31,7 @@ class Data {
   @IsUUID()
   @IsOptional()
   @IsString()
-  parent: string;
+  parentId: string;
 
   @IsOptional()
   image?: Buffer | null;
@@ -42,10 +42,6 @@ class Data {
 }
 
 export class CreateCommentDto {
-  @IsOptional()
-  @IsString()
-  rootId: string | null;
-
   @IsNotEmpty()
   @ValidateNested()
   @Type(() => Data)
