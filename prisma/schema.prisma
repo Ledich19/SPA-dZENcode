@@ -28,14 +28,16 @@ model Image {
   id     String @id @default(uuid())
   path    String
   name    String
-  comments Comment[]
+  comment  Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String? @unique
 }
 
 model File {
   id       String @id @default(uuid())
   path     String
   name    String
-  comments Comment[]
+  comment  Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String? @unique
 }
 
 model Comment {
@@ -43,15 +45,14 @@ model Comment {
   text    String
 
   userId String
-  user  User @relation(fields: [userId], references: [id])
-  imageId   String?
-  image     Image?   @relation(fields: [imageId], references: [id])
-  fileId    String?
-  file      File?    @relation(fields: [fileId], references: [id])
+  user  User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  image     Image?
+  file      File?
   root     Root?
 
   parentId  String?
-  parent    Comment?  @relation("ParentComment", fields: [parentId], references: [id])
+  parent    Comment?  @relation("ParentComment", fields: [parentId], references: [id], onDelete: Cascade)
   comments  Comment[] @relation("ParentComment")
 
   createdAt DateTime  @default(now())

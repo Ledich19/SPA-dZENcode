@@ -1,6 +1,13 @@
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsUUID,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
-export class CreateCommentDto {
+class Data {
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -10,13 +17,33 @@ export class CreateCommentDto {
   email: string;
 
   @IsString()
+  @IsOptional()
   homePage: string;
 
   @IsNotEmpty()
   @IsString()
   text: string;
 
+  @IsNotEmpty()
+  @IsString()
+  captcha: string;
+
+  @IsUUID()
   @IsOptional()
   @IsString()
-  parent: string;
+  parentId: string;
+
+  @IsOptional()
+  image?: Buffer | null;
+
+  @IsOptional()
+  @IsString()
+  file?: string | ArrayBuffer | null;
+}
+
+export class CreateCommentDto {
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => Data)
+  data: Data;
 }

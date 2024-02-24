@@ -1,4 +1,5 @@
 import {
+  ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -12,7 +13,6 @@ import { Server, Socket } from 'Socket.IO';
 import { AppService } from './app.service';
 import * as svgCaptcha from 'svg-captcha';
 import { CaptchaService } from './captcha/captcha.service';
-import { FileService } from './files/app.service';
 
 const users: Record<string, string> = {};
 
@@ -29,7 +29,6 @@ export class AppGateway
   constructor(
     private readonly appService: AppService,
     private readonly captchaService: CaptchaService,
-    private readonly fileService: FileService,
   ) {}
 
   @WebSocketServer() server: Server;
@@ -53,18 +52,25 @@ export class AppGateway
   }
 
   @SubscribeMessage('comments:get')
-  async handleCommentsGet() {
-    const comments = await this.appService.getRootComments();
-    this.server.emit('comments', comments);
+  async handleCommentsGet(
+    @MessageBody()
+    payload,
+    @ConnectedSocket() client: Socket,
+  ) {
+    console.log(payload);
+    const { page, pageSize } = payload;
+    const comments = await this.appService.getRootComments(page, pageSize);
+    client.emit('comments:get', { data: comments });
   }
 
   @SubscribeMessage('comment:id')
   async handleCommentGetById(
     @MessageBody()
     payload,
+    @ConnectedSocket() client: Socket,
   ) {
     const comment = await this.appService.getCommentById(payload.id);
-    this.server.emit('comment:id', comment);
+    client.emit('comment:id', comment);
   }
 
   @SubscribeMessage('comment:post')
@@ -72,23 +78,6 @@ export class AppGateway
     @MessageBody()
     payload,
   ) {
-    // export type CommentCreate = {
-    //   name: string;
-    //   email: string;
-    //   homePage?: string;
-    //   text: string;
-    //   image?: File | null;
-    //   file?: string | ArrayBuffer | null;
-    //   captcha: string;
-    //   parentId: string | null;
-    // };
-    if (payload.data.image) {
-      this.fileService.saveImage(payload.data.image);
-    }
-    if (payload.data.file) {
-      this.fileService.saveTextFile(payload.data.file);
-    }
-
     const createdComment = await this.appService.createComment(payload);
     this.server.emit('comment:post', createdComment);
   }
@@ -115,11 +104,11 @@ export class AppGateway
   }
 
   @SubscribeMessage('captcha:get')
-  async handleCaptchaGet(client: Socket) {
+  async handleCaptchaGet(@ConnectedSocket() client: Socket) {
     const sessionId = client.id;
     const captcha = svgCaptcha.create();
     this.captchaService.storeCaptcha(sessionId, captcha.text);
-    this.server.emit('captcha:get', { data: captcha.data });
+    client.emit('captcha:get', { data: captcha.data });
     //console.log('captcha', captcha.data);
   }
 }

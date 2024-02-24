@@ -9,19 +9,21 @@ import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { FilePresent, Forum } from "@mui/icons-material";
 import { Box, Button, Stack, Tooltip } from "@mui/material";
-import { Comment, ModalHandler } from "../types/comments.types";
+import { Comment, CommentActions, ModalHandler } from "../types/comments.types";
 import { commentItemStyles, ExpandMoreButton } from "./CommentItem.styled";
 import { useState } from "react";
 
 interface IProps {
   comment: Comment;
   handleModal: ModalHandler;
+  actions: CommentActions;
 }
 
-const CommentItem = ({ comment, handleModal }: IProps) => {
+const CommentItem = ({ comment, handleModal, actions }: IProps) => {
   const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => {
+    actions.getById({ id: comment.id });
     setExpanded(!expanded);
   };
 
@@ -32,11 +34,17 @@ const CommentItem = ({ comment, handleModal }: IProps) => {
         sx={commentItemStyles.cardHeader}
         avatar={
           <Avatar sx={commentItemStyles.avatar} aria-label="recipe">
-            {comment.user.name[0]}
+            {comment.user?.name[0] || ""}
           </Avatar>
         }
-        title={comment.user.name}
-        subheader={comment.createdAt.toISOString()}
+        title={comment.user?.name || ""}
+        subheader={new Date(comment.createdAt).toLocaleDateString("ru-RU", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+        })}
       />
       <CardContent sx={commentItemStyles.cardContent}>
         <Box
@@ -45,7 +53,7 @@ const CommentItem = ({ comment, handleModal }: IProps) => {
           key={"https://images.unsplash.com/photo-1551963831-b3b1ca40c98e"}
         >
           <img
-            src={`https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=164&h=164&fit=crop&auto=format`}
+            src={`http://localhost:3001/${comment.image?.path}`}
             style={commentItemStyles.image}
             alt={"item.title"}
           />
@@ -56,7 +64,7 @@ const CommentItem = ({ comment, handleModal }: IProps) => {
       </CardContent>
 
       <CardActions disableSpacing>
-         <Tooltip title="file name">
+        <Tooltip title="file name">
           <Button aria-label="filename">
             <FilePresent /> Filename.txt
           </Button>
@@ -68,11 +76,14 @@ const CommentItem = ({ comment, handleModal }: IProps) => {
           sx={{ marginLeft: "auto" }}
         >
           <Tooltip title="reply to comment">
-            <IconButton onClick={() => handleModal('',comment.id)} aria-label="reply to comment">
+            <IconButton
+              onClick={() => handleModal(comment.id)}
+              aria-label="reply to comment"
+            >
               <Forum />
             </IconButton>
           </Tooltip>
-          <Box component="span">{comment.comments.length}</Box>
+          <Box component="span">{comment.comments?.length || "0"}</Box>
           <ExpandMoreButton
             expand={expanded}
             onClick={handleExpandClick}
@@ -91,9 +102,17 @@ const CommentItem = ({ comment, handleModal }: IProps) => {
         sx={commentItemStyles.collapse}
       >
         <Box sx={{ paddingLeft: 4 }}>
-          {comment.comments?.map((child) => (
-            <CommentItem key={child.id} comment={child} handleModal={handleModal} />
-          ))}
+          {comment.comments &&
+            comment.comments.map((child) => {
+              return (
+                <CommentItem
+                  key={child.id}
+                  comment={child}
+                  handleModal={handleModal}
+                  actions={actions}
+                />
+              );
+            })}
         </Box>
       </Collapse>
     </Card>

@@ -4,9 +4,10 @@ import { AppGateway } from './app.gateway';
 import { PrismaService } from './prisma.service';
 import { CaptchaService } from './captcha/captcha.service';
 import { FileService } from './files/app.service';
+import { StaticFilesModule } from './files/staticFiles.module';
 
 @Module({
-  imports: [],
+  imports: [StaticFilesModule],
   controllers: [],
   providers: [
     PrismaService,

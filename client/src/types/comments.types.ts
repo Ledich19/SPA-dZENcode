@@ -32,9 +32,9 @@ export type CommentCreate = {
 };
 
 export interface CommentActions {
-  getAll: (payload: { page: string; count: number }) => void;
+  getAll: (payload: { page: number; pageSize: number }) => void;
   getById: (payload: { id: string }) => void;
-  send: (payload: { rootId: string | null; data: CommentCreate }) => void;
+  send: (payload: { data: CommentCreate }) => void;
   update: (payload: {
     id: string;
     rootId: string;
@@ -51,7 +51,6 @@ export interface UseSocketsHook {
 
 export type ModalState = {
   isOpen: boolean;
-  rootId: string | null;
   parentId: string | null;
 };
 
@@ -63,4 +62,4 @@ export interface CaptchaSocketData {
   };
 }
 
-export type ModalHandler = (rootId?: string | null, parentId?: string | null) => void;
+export type ModalHandler = (parentId?: string | null) => void;

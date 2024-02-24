@@ -6,12 +6,12 @@ import useInput from "../hooks/useInput";
 import ErrorMessage from "./ErrorMessage";
 import { AddPhotoAlternate, AttachFile, Cancel } from "@mui/icons-material";
 import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, MAX_FILE_SIZE } from "../constants";
-import { CommentActions, ModalState } from "../types/comments.types";
+import { CommentActions, ModalHandler, ModalState } from "../types/comments.types";
 import Captcha from "./Captcha";
 
 interface IProps {
   modal: ModalState;
-  handleModal: () => void;
+  handleModal: ModalHandler;
   actions: CommentActions;
 }
 
@@ -150,22 +150,21 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
       parentId: modal.parentId,
       captcha: captchaInput.value || "",
     };
-    
-    const rootId = modal.rootId || null;
-    console.log(rootId);
-    
-    actions.send({ rootId: null, data: comment });
+
+    console.log(modal);
+
+    actions.send({ data: comment });
   };
 
   return (
     <Modal
       open={modal.isOpen ? true : false}
-      onClose={handleModal}
+      onClose={() => handleModal(null)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
       <ModalPaper>
-        <CloseBtn onClick={handleModal}>
+        <CloseBtn onClick={() => handleModal(null)}>
           <ClearIcon />
         </CloseBtn>
 
