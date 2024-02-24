@@ -54,6 +54,11 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
   const commentInput = useInput("", {
     isEmpty: false,
     minLength: 5,
+    reGex: {
+      value: /<(?!\/?(a|code|i|strong)\b)[^>]*>/i,
+      text: "only <a href=”” title=””> </a> <code> </code> <i> </i> <strong> </strong> available",
+      reverse: true,
+    },
   });
   const captchaInput = useInput("", {
     isEmpty: true,
@@ -161,17 +166,17 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
   };
 
   const handleAddTagI = () => {
-    commentInput.onChange(commentInput.value + "<i></i>")
-  }
+    commentInput.onChange(commentInput.value + "<i></i>");
+  };
   const handleAddTagStrong = () => {
-    commentInput.onChange(commentInput.value + "<strong></strong>")
-  }
+    commentInput.onChange(commentInput.value + "<strong></strong>");
+  };
   const handleAddTagCode = () => {
-    commentInput.onChange(commentInput.value + "<code></code>")
-  }
+    commentInput.onChange(commentInput.value + "<code></code>");
+  };
   const handleAddTagA = () => {
-    commentInput.onChange(commentInput.value + "<a href=”” title=””></a>")
-  }
+    commentInput.onChange(commentInput.value + "<a href=”” title=””></a>");
+  };
 
   return (
     <Modal

@@ -18,6 +18,7 @@ export type ValidationType = {
   reGex?: {
     value: RegExp;
     text: string;
+    reverse: boolean;
   };
 };
 
