@@ -9,13 +9,13 @@ export type Comment = {
   createdAt: Date;
   image?: {
     id: string;
+    path: string;
     name: string;
-    url: string;
   };
   file?: {
     id: string;
+    path: string;
     name: string;
-    url: string;
   };
   comments: Comment[];
 };

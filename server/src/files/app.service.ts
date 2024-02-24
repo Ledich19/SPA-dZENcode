@@ -57,7 +57,7 @@ export class FileService {
 
       return {
         message: 'File saved successfully',
-        path: `documents/${uniqueId}---${fileName}.txt`,
+        path: `documents/${uniqueId}---${fileName}`,
         name: fileName,
       };
     } catch (error) {
