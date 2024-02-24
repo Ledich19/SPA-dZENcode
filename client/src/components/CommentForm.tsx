@@ -6,7 +6,11 @@ import useInput from "../hooks/useInput";
 import ErrorMessage from "./ErrorMessage";
 import { AddPhotoAlternate, AttachFile, Cancel } from "@mui/icons-material";
 import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, MAX_FILE_SIZE } from "../constants";
-import { CommentActions, ModalHandler, ModalState } from "../types/comments.types";
+import {
+  CommentActions,
+  ModalHandler,
+  ModalState,
+} from "../types/comments.types";
 import Captcha from "./Captcha";
 
 interface IProps {
@@ -156,6 +160,19 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
     actions.send({ data: comment });
   };
 
+  const handleAddTagI = () => {
+    commentInput.onChange(commentInput.value + "<i></i>")
+  }
+  const handleAddTagStrong = () => {
+    commentInput.onChange(commentInput.value + "<strong></strong>")
+  }
+  const handleAddTagCode = () => {
+    commentInput.onChange(commentInput.value + "<code></code>")
+  }
+  const handleAddTagA = () => {
+    commentInput.onChange(commentInput.value + "<a href=”” title=””></a>")
+  }
+
   return (
     <Modal
       open={modal.isOpen ? true : false}
@@ -203,6 +220,20 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
             label="Home page"
             variant="outlined"
           />
+          <Stack direction="row">
+            <Button size="small" onClick={handleAddTagI}>
+              [i]
+            </Button>
+            <Button size="small" onClick={handleAddTagStrong}>
+              [strong]
+            </Button>
+            <Button size="small" onClick={handleAddTagCode}>
+              [code]
+            </Button>
+            <Button size="small" onClick={handleAddTagA}>
+              [a]
+            </Button>
+          </Stack>
           <StyledTextarea
             value={commentInput.value}
             onBlur={() => commentInput.onBlur()}
