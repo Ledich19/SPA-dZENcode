@@ -27,8 +27,11 @@ function App() {
     });
   }, []);
 
-  const handleModal = (parentId: string | null) => {
-    setModal((value) => ({ isOpen: !value.isOpen, parentId }));
+  const handleModal = (parentId?: string | null) => {
+    setModal((value) => ({
+      isOpen: !value.isOpen,
+      parentId: parentId || null,
+    }));
   };
 
   return (
