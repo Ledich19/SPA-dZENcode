@@ -16,7 +16,6 @@ export class InputValidationGuard implements CanActivate {
       if (!data) {
         throw new ForbiddenException('Missing input data');
       }
-      console.log(data);
 
       // check tags
       const hasHtmlTags = /<(?!\/?(a|code|i|strong)\b)[^>]*>/i.test(data);

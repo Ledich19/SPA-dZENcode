@@ -14,8 +14,6 @@ export const useCaptchaSocket = (): CaptchaSocketData => {
     });
 
     socket.on("captcha:get", (payload: { data: string }) => {
-      console.log("WAS GET");
-      
       setCaptcha(payload.data);
     });
     socket.emit("captcha:get");
@@ -26,7 +24,6 @@ export const useCaptchaSocket = (): CaptchaSocketData => {
   }, []);
 
   const captchaGet = useCallback(() => {
-    console.log("GET");
     socket.emit("captcha:get");
   }, []);
 

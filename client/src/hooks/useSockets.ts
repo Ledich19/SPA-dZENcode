@@ -18,7 +18,6 @@ export const useSockets = (): UseSocketsHook => {
 
     // получение обновлений
     socket.on("comment:post", (payload: Comment) => {
-      console.log("POST", payload.parentId);
       if (payload.parentId) {
         socket.emit("comment:id", { id: payload.parentId });
       }
@@ -85,8 +84,6 @@ export const useSockets = (): UseSocketsHook => {
 
   // получение сообщений
   const getById = useCallback((payload: { id: string }) => {
-    console.log("socket.emit(comment:id, payload);");
-
     socket.emit("comment:id", payload);
   }, []);
 

@@ -159,8 +159,6 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
       captcha: captchaInput.value || "",
     };
 
-    console.log(modal);
-
     actions.send({ data: comment });
   };
 

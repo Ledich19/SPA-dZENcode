@@ -64,7 +64,6 @@ export class AppService {
   }
 
   async getCommentById(id: string) {
-    console.log('id: string', id);
     try {
       return await this.prisma.comment.findUnique({
         where: {
