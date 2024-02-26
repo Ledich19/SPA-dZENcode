@@ -57,6 +57,7 @@ export class AppGateway
     payload,
     @ConnectedSocket() client: Socket,
   ) {
+    if (!payload) return;
     const { page, pageSize, sort } = payload;
     const comments = await this.appService.getRootComments(
       page,
