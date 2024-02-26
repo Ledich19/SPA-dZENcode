@@ -6,6 +6,7 @@ import {
   UseSocketsHook,
 } from "../types/comments.types";
 import { SERVER_URI } from "../constants";
+import { SortDirection } from "../types/enums";
 
 let socket: Socket;
 
@@ -60,10 +61,21 @@ export const useSockets = (): UseSocketsHook => {
   }, []);
 
   // получение сообщений
-  const getAll = useCallback((payload: { page: number; pageSize: number }) => {
-    socket.emit("comments:get", payload);
-    // подключение/отключение пользователя
-  }, []);
+  const getAll = useCallback(
+    (payload: {
+      page: number;
+      pageSize: number;
+      sort: {
+        name: SortDirection | null;
+        email: SortDirection | null;
+        createdAt: SortDirection | null;
+      };
+    }) => {
+      socket.emit("comments:get", payload);
+      // подключение/отключение пользователя
+    },
+    []
+  );
 
   // получение сообщений
   const getById = useCallback((payload: { id: string }) => {

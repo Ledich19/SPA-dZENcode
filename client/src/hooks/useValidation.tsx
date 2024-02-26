@@ -7,7 +7,7 @@ export type ValidationType = {
   reGex?: {
     value: RegExp;
     text: string;
-    reverse?: false;
+    reverse?: boolean;
   };
 };
 

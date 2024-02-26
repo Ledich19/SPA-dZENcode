@@ -13,18 +13,54 @@ export class AppService {
     private readonly fileService: FileService,
   ) {}
 
-  async getRootComments(page: number = 0, count: number = 24) {
+  async getRootComments(
+    page: number = 0,
+    count: number = 24,
+    sort: {
+      name?: string | null;
+      email?: string | null;
+      createdAt?: string | null;
+    },
+  ) {
     const skip = (page - 1) * count;
-    const comments = await this.prisma.root.findMany({
+
+    const orderBy = [];
+    console.log('GET::: ', sort);
+
+    if (sort.name) {
+      orderBy.push({ user: { name: sort.name === 'asc' ? 'asc' : 'desc' } });
+    }
+    if (sort.email) {
+      orderBy.push({ user: { email: sort.email === 'asc' ? 'asc' : 'desc' } });
+    }
+    if (sort.createdAt) {
+      orderBy.push({ createdAt: sort.createdAt === 'asc' ? 'asc' : 'desc' });
+    } else {
+      orderBy.push({ createdAt: 'desc' });
+    }
+
+    const comments = await this.prisma.comment.findMany({
       skip,
       take: count,
+      where: {
+        parentId: null,
+      },
       include: {
-        comment: {
-          include: { user: true, image: true, file: true, comments: true },
+        user: true,
+        image: true,
+        file: true,
+        comments: {
+          include: {
+            user: true,
+            image: true,
+            file: true,
+            comments: true,
+          },
         },
       },
+      orderBy: orderBy,
     });
-    return comments.map((comment) => comment.comment);
+    return comments;
   }
 
   async getCommentById(id: string) {

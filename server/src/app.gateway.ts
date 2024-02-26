@@ -58,8 +58,12 @@ export class AppGateway
     @ConnectedSocket() client: Socket,
   ) {
     console.log(payload);
-    const { page, pageSize } = payload;
-    const comments = await this.appService.getRootComments(page, pageSize);
+    const { page, pageSize, sort } = payload;
+    const comments = await this.appService.getRootComments(
+      page,
+      pageSize,
+      sort,
+    );
     client.emit('comments:get', { data: comments });
   }
 

@@ -9,7 +9,9 @@ import CommentItem from "./CommentItem";
 import { Comment, CommentActions, ModalHandler } from "../types/comments.types";
 import { Box, Button, TableSortLabel } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { SortDirection } from "../types/enums";
+import { PAGE_SIZE_DEFAULT } from "../constants";
 
 interface IProps {
   comments: Comment[];
@@ -18,10 +20,19 @@ interface IProps {
 }
 
 const CommentsTable = ({ comments, handleModal, actions }: IProps) => {
-  type Order = "asc" | "desc";
-  type SortBy = "User mname" | "E-mail" | "created data";
-  const [order, setOrder] = useState<Order>("asc");
-  const [orderBy, setOrderBy] = useState("User mname");
+  const [sortBy, setSortBy] = useState<{
+    name: SortDirection | null;
+    email: SortDirection | null;
+    createdAt: SortDirection | null;
+  }>({
+    name: null,
+    email: null,
+    createdAt: SortDirection.DESC,
+  });
+
+  useEffect(() => {
+    actions.getAll({ page: 1, pageSize: PAGE_SIZE_DEFAULT, sort: sortBy });
+  }, [sortBy]);
 
   return (
     <>
@@ -31,42 +42,28 @@ const CommentsTable = ({ comments, handleModal, actions }: IProps) => {
             <TableRow>
               <TableCell
                 align="left"
-                sortDirection={orderBy === "User mname" ? order : false}
+                sortDirection={sortBy.name ? sortBy.name : false}
               >
                 <TableSortLabel
-                  active={orderBy === "User mname"}
-                  direction={orderBy === "User mname" ? order : "asc"}
+                  active={!!sortBy.name}
+                  direction={sortBy.name ? sortBy.name : SortDirection.ASC}
                   onClick={() => {
-                    setOrder(order === "desc" ? "asc" : "desc");
-                    setOrderBy("User mname");
+                    //setOrder(order === "desc" ? "asc" : "desc");
+                    setSortBy({
+                      name:
+                        sortBy.name === SortDirection.DESC
+                          ? SortDirection.ASC
+                          : SortDirection.DESC,
+                      email: null,
+                      createdAt: null,
+                    });
+                    //setOrderBy("User mname");
                   }}
                 >
                   {"User mname"}
-                  {orderBy === "User mname" ? (
+                  {sortBy.email ? (
                     <Box component="span" sx={visuallyHidden}>
-                      {order === "desc"
-                        ? "sorted descending"
-                        : "sorted ascending"}
-                    </Box>
-                  ) : null}
-                </TableSortLabel>
-              </TableCell>
-              <TableCell
-                align="left"
-                sortDirection={orderBy === "E-mail" ? order : false}
-              >
-                <TableSortLabel
-                  active={orderBy === "E-mail"}
-                  direction={orderBy === "E-mail" ? order : "asc"}
-                  onClick={() => {
-                    setOrder(order === "desc" ? "asc" : "desc");
-                    setOrderBy("E-mail");
-                  }}
-                >
-                  {"E-mail"}
-                  {orderBy === "E-mail" ? (
-                    <Box component="span" sx={visuallyHidden}>
-                      {order === "desc"
+                      {sortBy.name === SortDirection.DESC
                         ? "sorted descending"
                         : "sorted ascending"}
                     </Box>
@@ -76,20 +73,57 @@ const CommentsTable = ({ comments, handleModal, actions }: IProps) => {
 
               <TableCell
                 align="left"
-                sortDirection={orderBy === "created data" ? order : false}
+                sortDirection={sortBy.email ? sortBy.email : false}
               >
                 <TableSortLabel
-                  active={orderBy === "created data"}
-                  direction={orderBy === "created data" ? order : "asc"}
+                  active={!!sortBy.email}
+                  direction={sortBy.email ? sortBy.email : SortDirection.ASC}
                   onClick={() => {
-                    setOrder(order === "desc" ? "asc" : "desc");
-                    setOrderBy("created data");
+                    setSortBy({
+                      name: null,
+                      email:
+                        sortBy.email === SortDirection.DESC
+                          ? SortDirection.ASC
+                          : SortDirection.DESC,
+                      createdAt: null,
+                    });
+                  }}
+                >
+                  {"E-mail"}
+                  {sortBy.email ? (
+                    <Box component="span" sx={visuallyHidden}>
+                      {sortBy.email === SortDirection.DESC
+                        ? "sorted descending"
+                        : "sorted ascending"}
+                    </Box>
+                  ) : null}
+                </TableSortLabel>
+              </TableCell>
+
+              <TableCell
+                align="left"
+                sortDirection={sortBy.createdAt ? sortBy.createdAt : false}
+              >
+                <TableSortLabel
+                  active={!!sortBy.createdAt}
+                  direction={
+                    sortBy.createdAt ? sortBy.createdAt : SortDirection.ASC
+                  }
+                  onClick={() => {
+                    setSortBy({
+                      name: null,
+                      email: null,
+                      createdAt:
+                        sortBy.createdAt === SortDirection.DESC
+                          ? SortDirection.ASC
+                          : SortDirection.DESC,
+                    });
                   }}
                 >
                   {"created data"}
-                  {orderBy === "created data" ? (
+                  {sortBy.createdAt ? (
                     <Box component="span" sx={visuallyHidden}>
-                      {order === "desc"
+                      {sortBy.createdAt === SortDirection.DESC
                         ? "sorted descending"
                         : "sorted ascending"}
                     </Box>
