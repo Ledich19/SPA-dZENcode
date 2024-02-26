@@ -81,7 +81,15 @@ export class AppGateway
   async handleCommentPost(
     @MessageBody()
     payload,
+    @ConnectedSocket() client: Socket,
   ) {
+    const sessionId = client.id;
+    if (!this.captchaService.verifyCaptcha(sessionId, payload.data.captcha)) {
+      const captcha = svgCaptcha.create();
+      this.captchaService.storeCaptcha(sessionId, captcha.text);
+      client.emit('captcha:get', { data: captcha.data });
+      return;
+    }
     const createdComment = await this.appService.createComment(payload);
     this.server.emit('comment:post', createdComment);
   }
@@ -113,6 +121,5 @@ export class AppGateway
     const captcha = svgCaptcha.create();
     this.captchaService.storeCaptcha(sessionId, captcha.text);
     client.emit('captcha:get', { data: captcha.data });
-    //console.log('captcha', captcha.data);
   }
 }

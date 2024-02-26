@@ -19,6 +19,9 @@ export class CaptchaService {
 
   verifyCaptcha(key: string, value: string): boolean {
     const captcha = this.captchas[key];
+    console.log(this.captchas);
+    console.log('__key__', key, '__value__', value);
+
     if (!captcha) {
       return false;
     }

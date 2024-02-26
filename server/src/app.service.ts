@@ -5,12 +5,14 @@ import { CreateCommentDto } from './dto/CreateComment';
 import { CreateUserDto } from './dto/CreateUserDto';
 import { FileService } from './files/app.service';
 import { File, Image } from '@prisma/client';
+import { CaptchaService } from './captcha/captcha.service';
 
 @Injectable()
 export class AppService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly fileService: FileService,
+    private readonly captchaService: CaptchaService,
   ) {}
 
   async getRootComments(
@@ -25,8 +27,6 @@ export class AppService {
     const skip = (page - 1) * count;
 
     const orderBy = [];
-    console.log('GET::: ', sort);
-
     if (sort.name) {
       orderBy.push({ user: { name: sort.name === 'asc' ? 'asc' : 'desc' } });
     }
@@ -146,12 +146,6 @@ export class AppService {
           : undefined,
       },
     });
-
-    if (comment.parentId === null) {
-      await this.prisma.root.create({
-        data: { rootId: comment.id },
-      });
-    }
 
     return comment;
   }

@@ -1,24 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { io, Socket } from "Socket.IO-client";
 import {
   Comment,
   CommentCreate,
   UseSocketsHook,
 } from "../types/comments.types";
-import { SERVER_URI } from "../constants";
 import { SortDirection } from "../types/enums";
-
-let socket: Socket;
+import socket from "./socketInstance";
 
 export const useSockets = (): UseSocketsHook => {
-  if (!socket) {
-    socket = io(SERVER_URI, {
-      query: {
-        //userName: userInfo.userName,
-      },
-    });
-  }
-
   const [comments, setComments] = useState<Comment[]>([]);
   const [log, setLog] = useState<string>();
 
@@ -30,27 +19,44 @@ export const useSockets = (): UseSocketsHook => {
     // получение обновлений
     socket.on("comment:post", (payload: Comment) => {
       console.log("POST", payload.parentId);
-
-      socket.emit("comment:id", { id: payload.parentId });
+      if (payload.parentId) {
+        socket.emit("comment:id", { id: payload.parentId });
+      }
+      if (payload.id) {
+        socket.emit("comment:id", { id: payload.id });
+      }
     });
 
     // получение по id
     socket.on("comment:id", (payload: Comment) => {
-      setComments((prevComments) => {
-        const updatedComments = [...prevComments];
-        const updateCommentByParentId = (rootComment: Comment) => {
-          if (rootComment && rootComment.id === payload.id) {
-            rootComment.comments = payload.comments;
-            return;
+      if (!payload) return;
+      if (!payload.parentId) {
+        setComments((prevComments) => {
+          const existingIndex = prevComments.findIndex(
+            (comment) => comment.id === payload.id
+          );
+          if (existingIndex !== -1) {
+            return prevComments;
           }
-          if (!rootComment.comments) return;
-          for (const subComment of rootComment.comments) {
-            updateCommentByParentId(subComment);
-          }
-        };
-        updatedComments.forEach(updateCommentByParentId);
-        return updatedComments;
-      });
+          return [payload, ...prevComments];
+        });
+      } else {
+        setComments((prevComments) => {
+          const updatedComments = [...prevComments];
+          const updateCommentByParentId = (rootComment: Comment) => {
+            if (rootComment && rootComment.id === payload.id) {
+              rootComment.comments = payload.comments;
+              return;
+            }
+            if (!rootComment.comments) return;
+            for (const subComment of rootComment.comments) {
+              updateCommentByParentId(subComment);
+            }
+          };
+          updatedComments.forEach(updateCommentByParentId);
+          return updatedComments;
+        });
+      }
     });
 
     // получение сообщений

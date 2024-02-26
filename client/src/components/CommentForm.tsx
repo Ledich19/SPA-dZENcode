@@ -34,7 +34,6 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
     isEmpty: false,
     minLength: 3,
   });
-
   const emailInput = useInput("", {
     isEmpty: false,
     minLength: 3,
@@ -61,7 +60,7 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
     },
   });
   const captchaInput = useInput("", {
-    isEmpty: true,
+    isEmpty: false,
     minLength: 4,
     maxLength: 4,
   });
