@@ -52,11 +52,13 @@ const CommentItem = ({ comment, handleModal, actions }: IProps) => {
           sx={commentItemStyles.imageContainer}
           key={"https://images.unsplash.com/photo-1551963831-b3b1ca40c98e"}
         >
-          <img
-            src={`http://localhost:3001/${comment.image?.path}`}
-            style={commentItemStyles.image}
-            alt={"item.title"}
-          />
+          {comment.image?.path && (
+            <img
+              src={`http://localhost:3001/${comment.image?.path}`}
+              style={commentItemStyles.image}
+              alt={"item.title"}
+            />
+          )}
         </Box>
         <Typography variant="body2" color="text.secondary">
           {comment.text}
@@ -64,11 +66,19 @@ const CommentItem = ({ comment, handleModal, actions }: IProps) => {
       </CardContent>
 
       <CardActions disableSpacing>
-        <Tooltip title="file name">
-          <Button aria-label="filename">
-            <FilePresent /> Filename.txt
-          </Button>
-        </Tooltip>
+        {comment.file?.path && (
+          <Tooltip title="file name">
+            <a
+              href={`http://localhost:3001/${comment.file?.path}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button aria-label="filename">
+                <FilePresent /> {comment.file?.path}
+              </Button>
+            </a>
+          </Tooltip>
+        )}
         <Stack
           direction="row"
           alignItems="center"
