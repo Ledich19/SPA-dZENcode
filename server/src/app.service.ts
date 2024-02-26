@@ -5,14 +5,12 @@ import { CreateCommentDto } from './dto/CreateComment';
 import { CreateUserDto } from './dto/CreateUserDto';
 import { FileService } from './files/app.service';
 import { File, Image } from '@prisma/client';
-import { CaptchaService } from './captcha/captcha.service';
 
 @Injectable()
 export class AppService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly fileService: FileService,
-    private readonly captchaService: CaptchaService,
   ) {}
 
   async getRootComments(

@@ -16,9 +16,9 @@ export class InputValidationGuard implements CanActivate {
       if (!data) {
         throw new ForbiddenException('Missing input data');
       }
-
+      const testData = JSON.stringify(data);
       // check tags
-      const hasHtmlTags = /<(?!\/?(a|code|i|strong)\b)[^>]*>/i.test(data);
+      const hasHtmlTags = /<(?!\/?(a|code|i|strong)\b)[^>]*>/i.test(testData);
       if (hasHtmlTags) {
         throw new ForbiddenException('Invalid HTML tags');
       }
@@ -33,7 +33,7 @@ export class InputValidationGuard implements CanActivate {
 
         return unclosedTags.length > 0 ? false : true;
       }
-      if (!checkCloseTags(data.toString())) {
+      if (!checkCloseTags(testData)) {
         throw new ForbiddenException('Improperly closed HTML tags');
       }
 

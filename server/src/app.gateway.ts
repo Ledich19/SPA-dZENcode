@@ -13,6 +13,8 @@ import { Server, Socket } from 'Socket.IO';
 import { AppService } from './app.service';
 import * as svgCaptcha from 'svg-captcha';
 import { CaptchaService } from './captcha/captcha.service';
+import { UseGuards } from '@nestjs/common';
+import { InputValidationGuard } from './guards/tags.guard';
 
 const users: Record<string, string> = {};
 
@@ -78,6 +80,7 @@ export class AppGateway
   }
 
   @SubscribeMessage('comment:post')
+  @UseGuards(InputValidationGuard)
   async handleCommentPost(
     @MessageBody()
     payload,
