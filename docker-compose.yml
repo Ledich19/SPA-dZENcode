@@ -1,19 +1,36 @@
 services:
-  # название сервиса
   postgres:
-    # образ
     image: postgres
-    # политика перезапуска
     restart: on-failure
-    # файл с переменными среды окружения
     env_file:
-      - .env
-    # порты
+      - server/.env
     ports:
       - 5432:5432
-    # тома для постоянного хранения данных
+    networks:
+      - postgres
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - ./pg_data:/var/lib/postgresql/data
 
-volumes:
-  postgres-data:
+  backend:
+    build:
+      context: ./server
+      dockerfile: server.Dockerfile
+    ports:
+      - 3001:3001
+    networks:
+      - postgres
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: client.Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+networks:
+  postgres:
+    driver: bridge

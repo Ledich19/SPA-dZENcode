@@ -9,7 +9,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 //import { Prisma } from '@prisma/client';
-import { Server, Socket } from 'Socket.IO';
+import { Server, Socket } from 'socket.io';
 import { AppService } from './app.service';
 import * as svgCaptcha from 'svg-captcha';
 import { CaptchaService } from './captcha/captcha.service';

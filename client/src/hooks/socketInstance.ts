@@ -1,5 +1,5 @@
 // socketInstance.js
-import { io } from "Socket.IO-client";
+import { io } from "socket.io-client";
 import { SERVER_URI } from "../constants";
 
 

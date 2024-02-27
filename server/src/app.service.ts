@@ -15,7 +15,7 @@ export class AppService {
 
   async getRootComments(
     page: number = 0,
-    count: number = 24,
+    count: number = 25,
     sort: {
       name?: string | null;
       email?: string | null;

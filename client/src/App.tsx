@@ -13,7 +13,7 @@ function App() {
     isOpen: false,
     parentId: null,
   });
-  const { comments, log, actions } = useSockets();
+  const { comments, actions } = useSockets();
 
   useEffect(() => {
     actions.getAll({
