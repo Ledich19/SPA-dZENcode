@@ -37,6 +37,12 @@ export class AppService {
       orderBy.push({ createdAt: 'desc' });
     }
 
+    const totalCommentsCount = await this.prisma.comment.count({
+      where: {
+        parentId: null,
+      },
+    });
+
     const comments = await this.prisma.comment.findMany({
       skip,
       take: count,
@@ -58,7 +64,7 @@ export class AppService {
       },
       orderBy: orderBy,
     });
-    return comments;
+    return { comments: comments, total: totalCommentsCount };
   }
 
   async getCommentById(id: string) {

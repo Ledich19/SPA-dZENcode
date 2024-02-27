@@ -9,6 +9,7 @@ import socket from "./socketInstance";
 
 export const useSockets = (): UseSocketsHook => {
   const [comments, setComments] = useState<Comment[]>([]);
+  const [total, setTotal] = useState<number>(0);
   const [log, setLog] = useState<string>();
 
   useEffect(() => {
@@ -59,9 +60,14 @@ export const useSockets = (): UseSocketsHook => {
     });
 
     // получение сообщений
-    socket.on("comments:get", (payload: { type: string; data: Comment[] }) => {
-      setComments(payload.data);
-    });
+    socket.on(
+      "comments:get",
+      (payload: { total: number; comments: Comment[] }) => {
+        setTotal(payload.total);
+        setComments(payload.comments);
+        console.log(payload);
+      }
+    );
     socket.emit("comments:get");
   }, []);
 
@@ -116,5 +122,5 @@ export const useSockets = (): UseSocketsHook => {
     []
   );
 
-  return { comments, log, actions };
+  return { comments, total, log, actions };
 };

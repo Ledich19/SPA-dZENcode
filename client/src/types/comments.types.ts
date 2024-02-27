@@ -57,6 +57,7 @@ export interface CommentActions {
 
 export interface UseSocketsHook {
   comments: Comment[] | undefined;
+  total: number;
   log: string | undefined;
   actions: CommentActions;
 }

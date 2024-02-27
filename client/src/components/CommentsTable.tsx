@@ -7,7 +7,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import CommentItem from "./CommentItem";
 import { Comment, CommentActions, ModalHandler } from "../types/comments.types";
-import { Box, Button, TableSortLabel } from "@mui/material";
+import { Box, Button, Pagination, TableSortLabel } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { useEffect, useState } from "react";
 import { SortDirection } from "../types/enums";
@@ -17,9 +17,10 @@ interface IProps {
   comments: Comment[];
   handleModal: ModalHandler;
   actions: CommentActions;
+  total: number;
 }
 
-const CommentsTable = ({ comments, handleModal, actions }: IProps) => {
+const CommentsTable = ({ comments, handleModal, actions, total }: IProps) => {
   const [sortBy, setSortBy] = useState<{
     name: SortDirection | null;
     email: SortDirection | null;
@@ -29,10 +30,16 @@ const CommentsTable = ({ comments, handleModal, actions }: IProps) => {
     email: null,
     createdAt: SortDirection.DESC,
   });
+  const [page, setPage] = useState<number>(1);
 
   useEffect(() => {
-    actions.getAll({ page: 1, pageSize: PAGE_SIZE_DEFAULT, sort: sortBy });
-  }, [sortBy]);
+    actions.getAll({ page: page, pageSize: PAGE_SIZE_DEFAULT, sort: sortBy });
+  }, [sortBy, page]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handlePageChange = (_: any, page: number) => {
+    setPage(page);
+  };
 
   return (
     <>
@@ -151,6 +158,13 @@ const CommentsTable = ({ comments, handleModal, actions }: IProps) => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Pagination
+        count={Math.ceil(total / PAGE_SIZE_DEFAULT)}
+        variant="outlined"
+        shape="rounded"
+        page={page}
+        onChange={handlePageChange}
+      />
     </>
   );
 };

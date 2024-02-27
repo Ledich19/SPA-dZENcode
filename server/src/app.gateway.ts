@@ -61,12 +61,8 @@ export class AppGateway
   ) {
     if (!payload) return;
     const { page, pageSize, sort } = payload;
-    const comments = await this.appService.getRootComments(
-      page,
-      pageSize,
-      sort,
-    );
-    client.emit('comments:get', { data: comments });
+    const data = await this.appService.getRootComments(page, pageSize, sort);
+    client.emit('comments:get', data);
   }
 
   @SubscribeMessage('comment:id')

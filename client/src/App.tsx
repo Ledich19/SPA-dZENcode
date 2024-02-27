@@ -13,7 +13,7 @@ function App() {
     isOpen: false,
     parentId: null,
   });
-  const { comments, actions } = useSockets();
+  const { comments, actions, total } = useSockets();
 
   useEffect(() => {
     actions.getAll({
@@ -45,6 +45,7 @@ function App() {
         <CommentsTable
           actions={actions}
           comments={comments || []}
+          total={total}
           handleModal={handleModal}
         />
       </Paper>
