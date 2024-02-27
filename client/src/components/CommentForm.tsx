@@ -67,10 +67,7 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
 
   useEffect(() => {
     if (modal.isOpen) {
-      nameInput.clear();
-      emailInput.clear();
-      homepageInput.clear();
-      commentInput.clear();
+      clearForm();
     }
   }, [modal.isOpen]);
 
@@ -147,6 +144,16 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
     }
   };
 
+  const clearForm = () => {
+    nameInput.clear();
+    emailInput.clear();
+    homepageInput.clear();
+    commentInput.clear();
+    captchaInput.clear();
+    setSelectedImg(null);
+    setSelectedTxt(null);
+  };
+
   const handleSubmit = () => {
     const comment = {
       name: nameInput.value || "",
@@ -160,6 +167,7 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
     };
 
     actions.send({ data: comment });
+    clearForm();
   };
 
   const handleAddTagI = () => {

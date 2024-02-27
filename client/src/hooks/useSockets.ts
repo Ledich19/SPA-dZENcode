@@ -17,7 +17,6 @@ export const useSockets = (): UseSocketsHook => {
       setLog(log);
     });
 
-    // получение обновлений
     socket.on("comment:post", (payload: Comment) => {
       if (payload.parentId) {
         socket.emit("comment:id", { id: payload.parentId });
@@ -27,7 +26,6 @@ export const useSockets = (): UseSocketsHook => {
       }
     });
 
-    // получение по id
     socket.on("comment:id", (payload: Comment) => {
       if (!payload) return;
       if (!payload.parentId) {
@@ -59,19 +57,16 @@ export const useSockets = (): UseSocketsHook => {
       }
     });
 
-    // получение сообщений
     socket.on(
       "comments:get",
       (payload: { total: number; comments: Comment[] }) => {
         setTotal(payload.total);
         setComments(payload.comments);
-        console.log(payload);
       }
     );
     socket.emit("comments:get");
   }, []);
 
-  // получение сообщений
   const getAll = useCallback(
     (payload: {
       page: number;
@@ -83,22 +78,18 @@ export const useSockets = (): UseSocketsHook => {
       };
     }) => {
       socket.emit("comments:get", payload);
-      // подключение/отключение пользователя
     },
     []
   );
 
-  // получение сообщений
   const getById = useCallback((payload: { id: string }) => {
     socket.emit("comment:id", payload);
   }, []);
 
-  // отправка сообщения
   const send = useCallback((payload: { data: CommentCreate }) => {
     socket.emit("comment:post", payload);
   }, []);
 
-  // обновление сообщения
   const update = useCallback(
     (payload: { id: string; rootId: string | null; data: CommentCreate }) => {
       socket.emit("comment:put", payload);
@@ -106,7 +97,6 @@ export const useSockets = (): UseSocketsHook => {
     []
   );
 
-  // удаление сообщения
   const remove = useCallback((payload: { id: string }) => {
     socket.emit("comment:delete", payload);
   }, []);
