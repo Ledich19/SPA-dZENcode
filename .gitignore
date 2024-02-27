@@ -1,5 +1,5 @@
 node_modules
+pg_data
 # Keep environment variables out of version control
 .env
 public
-pg_data
