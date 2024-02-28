@@ -119,13 +119,9 @@ type Comment = {
   ```
   dckr_pat_No4TbSx9ztCHx18u5WVyZ1d5ceo
 
-
-Развёрнуть (Хостинг / VDS)
-Я не знаю где его можно развернуть я обычно render.com использую в учебных целял
-но он через 15 минут бездействия глохнет
-■ Git-репозиторий
-https://github.com/Ledich19/SPA-dZENcode
 ■ Docker
 https://hub.docker.com/r/ledich/spa-dzencode-frontend
 https://hub.docker.com/r/ledich/spa-dzencode-backend
-■ Read.me 
+
+
+
