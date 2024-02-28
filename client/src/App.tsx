@@ -6,20 +6,32 @@ import { useEffect, useState } from "react";
 import { useSockets } from "./hooks/useSockets";
 import { ModalState } from "./types/comments.types";
 import { PAGE_SIZE_DEFAULT } from "./constants";
+import { SortDirection } from "./types/enums";
 
 function App() {
   const [modal, setModal] = useState<ModalState>({
     isOpen: false,
     parentId: null,
   });
-  const { comments, log, actions } = useSockets();
+  const { comments, actions, total } = useSockets();
 
   useEffect(() => {
-    actions.getAll({ page: 1, pageSize: PAGE_SIZE_DEFAULT });
+    actions.getAll({
+      page: 1,
+      pageSize: PAGE_SIZE_DEFAULT,
+      sort: {
+        name: null,
+        email: null,
+        createdAt: SortDirection.DESC,
+      },
+    });
   }, []);
 
-  const handleModal = (parentId: string | null) => {
-    setModal((value) => ({ isOpen: !value.isOpen, parentId }));
+  const handleModal = (parentId?: string | null) => {
+    setModal((value) => ({
+      isOpen: !value.isOpen,
+      parentId: parentId || null,
+    }));
   };
 
   return (
@@ -33,6 +45,7 @@ function App() {
         <CommentsTable
           actions={actions}
           comments={comments || []}
+          total={total}
           handleModal={handleModal}
         />
       </Paper>

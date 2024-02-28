@@ -9,10 +9,12 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 //import { Prisma } from '@prisma/client';
-import { Server, Socket } from 'Socket.IO';
+import { Server, Socket } from 'socket.io';
 import { AppService } from './app.service';
 import * as svgCaptcha from 'svg-captcha';
 import { CaptchaService } from './captcha/captcha.service';
+import { UseGuards } from '@nestjs/common';
+import { InputValidationGuard } from './guards/tags.guard';
 
 const users: Record<string, string> = {};
 
@@ -57,10 +59,10 @@ export class AppGateway
     payload,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log(payload);
-    const { page, pageSize } = payload;
-    const comments = await this.appService.getRootComments(page, pageSize);
-    client.emit('comments:get', { data: comments });
+    if (!payload) return;
+    const { page, pageSize, sort } = payload;
+    const data = await this.appService.getRootComments(page, pageSize, sort);
+    client.emit('comments:get', data);
   }
 
   @SubscribeMessage('comment:id')
@@ -74,10 +76,19 @@ export class AppGateway
   }
 
   @SubscribeMessage('comment:post')
+  @UseGuards(InputValidationGuard)
   async handleCommentPost(
     @MessageBody()
     payload,
+    @ConnectedSocket() client: Socket,
   ) {
+    const sessionId = client.id;
+    if (!this.captchaService.verifyCaptcha(sessionId, payload.data.captcha)) {
+      const captcha = svgCaptcha.create();
+      this.captchaService.storeCaptcha(sessionId, captcha.text);
+      client.emit('captcha:get', { data: captcha.data });
+      return;
+    }
     const createdComment = await this.appService.createComment(payload);
     this.server.emit('comment:post', createdComment);
   }
@@ -109,6 +120,5 @@ export class AppGateway
     const captcha = svgCaptcha.create();
     this.captchaService.storeCaptcha(sessionId, captcha.text);
     client.emit('captcha:get', { data: captcha.data });
-    //console.log('captcha', captcha.data);
   }
 }

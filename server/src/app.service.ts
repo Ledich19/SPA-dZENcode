@@ -13,22 +13,61 @@ export class AppService {
     private readonly fileService: FileService,
   ) {}
 
-  async getRootComments(page: number = 0, count: number = 24) {
+  async getRootComments(
+    page: number = 0,
+    count: number = 25,
+    sort: {
+      name?: string | null;
+      email?: string | null;
+      createdAt?: string | null;
+    },
+  ) {
     const skip = (page - 1) * count;
-    const comments = await this.prisma.root.findMany({
-      skip,
-      take: count,
-      include: {
-        comment: {
-          include: { user: true, image: true, file: true, comments: true },
-        },
+
+    const orderBy = [];
+    if (sort.name) {
+      orderBy.push({ user: { name: sort.name === 'asc' ? 'asc' : 'desc' } });
+    }
+    if (sort.email) {
+      orderBy.push({ user: { email: sort.email === 'asc' ? 'asc' : 'desc' } });
+    }
+    if (sort.createdAt) {
+      orderBy.push({ createdAt: sort.createdAt === 'asc' ? 'asc' : 'desc' });
+    } else {
+      orderBy.push({ createdAt: 'desc' });
+    }
+
+    const totalCommentsCount = await this.prisma.comment.count({
+      where: {
+        parentId: null,
       },
     });
-    return comments.map((comment) => comment.comment);
+
+    const comments = await this.prisma.comment.findMany({
+      skip,
+      take: count,
+      where: {
+        parentId: null,
+      },
+      include: {
+        user: true,
+        image: true,
+        file: true,
+        comments: {
+          include: {
+            user: true,
+            image: true,
+            file: true,
+            comments: true,
+          },
+        },
+      },
+      orderBy: orderBy,
+    });
+    return { comments: comments, total: totalCommentsCount };
   }
 
   async getCommentById(id: string) {
-    console.log('id: string', id);
     try {
       return await this.prisma.comment.findUnique({
         where: {
@@ -110,12 +149,6 @@ export class AppService {
           : undefined,
       },
     });
-
-    if (comment.parentId === null) {
-      await this.prisma.root.create({
-        data: { rootId: comment.id },
-      });
-    }
 
     return comment;
   }

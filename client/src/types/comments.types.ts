@@ -1,3 +1,5 @@
+import { SortDirection } from "./enums";
+
 export type Comment = {
   id: string;
   text: string;
@@ -31,8 +33,18 @@ export type CommentCreate = {
   parentId: string | null;
 };
 
+
+
 export interface CommentActions {
-  getAll: (payload: { page: number; pageSize: number }) => void;
+  getAll: (payload: {
+    page: number;
+    pageSize: number;
+    sort: {
+      name: SortDirection | null;
+      email: SortDirection | null;
+      createdAt: SortDirection | null;
+    };
+  }) => void;
   getById: (payload: { id: string }) => void;
   send: (payload: { data: CommentCreate }) => void;
   update: (payload: {
@@ -45,6 +57,7 @@ export interface CommentActions {
 
 export interface UseSocketsHook {
   comments: Comment[] | undefined;
+  total: number;
   log: string | undefined;
   actions: CommentActions;
 }

@@ -1,19 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { io, Socket } from "Socket.IO-client";
-import { SERVER_URI } from "../constants";
 import { CaptchaSocketData } from "../types/comments.types";
+import socket from "./socketInstance";
 
-let socket: Socket;
+
 
 export const useCaptchaSocket = (): CaptchaSocketData => {
   const [captcha, setCaptcha] = useState<string | null>(null);
   const [log, setLog] = useState<string>();
-
-  if (!socket) {
-    socket = io(SERVER_URI, {
-      query: {},
-    });
-  }
 
   useEffect(() => {
     socket.on("captcha:log", (log: string) => {
@@ -31,7 +24,6 @@ export const useCaptchaSocket = (): CaptchaSocketData => {
   }, []);
 
   const captchaGet = useCallback(() => {
-    console.log("GET");
     socket.emit("captcha:get");
   }, []);
 

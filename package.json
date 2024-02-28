@@ -8,7 +8,6 @@
     "prisma": "^5.9.1"
   },
   "dependencies": {
-    "@prisma/client": "^5.9.1",
-    "class-validator": "^0.14.1"
+
   }
 }

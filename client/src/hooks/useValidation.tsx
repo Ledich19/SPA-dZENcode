@@ -7,6 +7,7 @@ export type ValidationType = {
   reGex?: {
     value: RegExp;
     text: string;
+    reverse?: boolean;
   };
 };
 
@@ -26,7 +27,10 @@ const useValidation = (
         case "reGex":
           if (value && validations[key]) {
             const isValidValue = validations[key]?.value?.test(value);
-            if (!isValidValue) {
+            if (!validations[key]?.reverse && !isValidValue) {
+              setError(validations[key]?.text || "");
+              setIsValid(false);
+            } else if (validations[key]?.reverse && isValidValue) {
               setError(validations[key]?.text || "");
               setIsValid(false);
             }

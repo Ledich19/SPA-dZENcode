@@ -6,7 +6,11 @@ import useInput from "../hooks/useInput";
 import ErrorMessage from "./ErrorMessage";
 import { AddPhotoAlternate, AttachFile, Cancel } from "@mui/icons-material";
 import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, MAX_FILE_SIZE } from "../constants";
-import { CommentActions, ModalHandler, ModalState } from "../types/comments.types";
+import {
+  CommentActions,
+  ModalHandler,
+  ModalState,
+} from "../types/comments.types";
 import Captcha from "./Captcha";
 
 interface IProps {
@@ -30,7 +34,6 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
     isEmpty: false,
     minLength: 3,
   });
-
   const emailInput = useInput("", {
     isEmpty: false,
     minLength: 3,
@@ -50,19 +53,21 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
   const commentInput = useInput("", {
     isEmpty: false,
     minLength: 5,
+    reGex: {
+      value: /<(?!\/?(a|code|i|strong)\b)[^>]*>/i,
+      text: "only <a href=”” title=””> </a> <code> </code> <i> </i> <strong> </strong> available",
+      reverse: true,
+    },
   });
   const captchaInput = useInput("", {
-    isEmpty: true,
+    isEmpty: false,
     minLength: 4,
     maxLength: 4,
   });
 
   useEffect(() => {
     if (modal.isOpen) {
-      nameInput.clear();
-      emailInput.clear();
-      homepageInput.clear();
-      commentInput.clear();
+      clearForm();
     }
   }, [modal.isOpen]);
 
@@ -139,6 +144,16 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
     }
   };
 
+  const clearForm = () => {
+    nameInput.clear();
+    emailInput.clear();
+    homepageInput.clear();
+    commentInput.clear();
+    captchaInput.clear();
+    setSelectedImg(null);
+    setSelectedTxt(null);
+  };
+
   const handleSubmit = () => {
     const comment = {
       name: nameInput.value || "",
@@ -151,9 +166,21 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
       captcha: captchaInput.value || "",
     };
 
-    console.log(modal);
-
     actions.send({ data: comment });
+    clearForm();
+  };
+
+  const handleAddTagI = () => {
+    commentInput.onChange(commentInput.value + "<i></i>");
+  };
+  const handleAddTagStrong = () => {
+    commentInput.onChange(commentInput.value + "<strong></strong>");
+  };
+  const handleAddTagCode = () => {
+    commentInput.onChange(commentInput.value + "<code></code>");
+  };
+  const handleAddTagA = () => {
+    commentInput.onChange(commentInput.value + "<a href=”” title=””></a>");
   };
 
   return (
@@ -203,6 +230,20 @@ const CommentForm = ({ modal, handleModal, actions }: IProps) => {
             label="Home page"
             variant="outlined"
           />
+          <Stack direction="row">
+            <Button size="small" onClick={handleAddTagI}>
+              [i]
+            </Button>
+            <Button size="small" onClick={handleAddTagStrong}>
+              [strong]
+            </Button>
+            <Button size="small" onClick={handleAddTagCode}>
+              [code]
+            </Button>
+            <Button size="small" onClick={handleAddTagA}>
+              [a]
+            </Button>
+          </Stack>
           <StyledTextarea
             value={commentInput.value}
             onBlur={() => commentInput.onBlur()}
