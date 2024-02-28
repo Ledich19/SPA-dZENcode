@@ -12,6 +12,7 @@ import { Box, Button, Stack, Tooltip } from "@mui/material";
 import { Comment, CommentActions, ModalHandler } from "../types/comments.types";
 import { commentItemStyles, ExpandMoreButton } from "./CommentItem.styled";
 import { useState } from "react";
+import { SERVER_URI } from "../constants";
 
 interface IProps {
   comment: Comment;
@@ -54,7 +55,7 @@ const CommentItem = ({ comment, handleModal, actions }: IProps) => {
         >
           {comment.image?.path && (
             <img
-              src={`http://localhost:3001/${comment.image?.path}`}
+              src={`${SERVER_URI}/${comment.image?.path}`}
               style={commentItemStyles.image}
               alt={"item.title"}
             />
@@ -69,7 +70,7 @@ const CommentItem = ({ comment, handleModal, actions }: IProps) => {
         {comment.file?.path && (
           <Tooltip title="file name">
             <a
-              href={`http://localhost:3001/${comment.file?.path}`}
+              href={`${SERVER_URI}/${comment.file?.path}`}
               target="_blank"
               rel="noopener noreferrer"
             >
