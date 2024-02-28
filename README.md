@@ -1,5 +1,9 @@
 # fo start
 
+### you need to specify the server address in the client constants 
+### and fill in the .env in the server folder
+### using an .env.example as a sample
+
 ### in dicker
 > docker compose up -d
 
@@ -118,7 +122,7 @@ type Comment = {
 
 Развёрнуть (Хостинг / VDS)
 Я не знаю где его можно развернуть я обычно render.com использую в учебных целял
-но он через 15 минут обычно глохнет
+но он через 15 минут бездействия глохнет
 ■ Git-репозиторий
 https://github.com/Ledich19/SPA-dZENcode
 ■ Docker
